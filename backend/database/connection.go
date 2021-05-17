@@ -21,4 +21,5 @@ func Connect() {
 	connection.AutoMigrate(&models.User{})
 	connection.AutoMigrate(&models.Course{})
 	connection.AutoMigrate(&models.Module{})
+	connection.AutoMigrate(&models.Lesson{})
 }

@@ -22,6 +22,19 @@ func SignUp(c *fiber.Ctx) error{
 		return err
 	}
 
+	email := data["email"]
+
+	userToCheck := models.User{}
+
+	database.DB.Where("email = ?", email).First(&userToCheck)
+
+	if (userToCheck.Id != 0) {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"message": "User with current email already exist",
+		})
+	}
+
 	//Crypting password
 	pass, err := bcrypt.GenerateFromPassword([]byte(data["password"]), 14)
 
@@ -112,7 +125,7 @@ func User(c *fiber.Ctx) error {
 	})
 
 	if err != nil {
-		c.Status(fiber.StatusUnauthorized)
+		//c.Status(fiber.StatusUnauthorized)
 		return c.JSON(fiber.Map{
 			"message": "Unauthenticated",
 		})

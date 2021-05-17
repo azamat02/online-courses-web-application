@@ -22,4 +22,10 @@ func Setup(app *fiber.App) {
 	app.Get("api/modules/by_course/:id", controllers.GetModulesByCourseId)
 	app.Get("api/modules", controllers.GetAllModules)
 	app.Post("api/modules", controllers.CreateModule)
+
+	//Lesson routes
+	app.Get("api/lessons/:id", controllers.GetLesson)
+	app.Get("api/lessons/by_module/:id", controllers.GetLessonsByModuleId)
+	app.Get("api/lessons", controllers.GetAllLessons)
+	app.Post("api/lessons", controllers.CreateLesson)
 }
