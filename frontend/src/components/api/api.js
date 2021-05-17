@@ -1,6 +1,6 @@
 export default class CoursesApi{
     constructor() {
-        this._apiBase = 'http://localhost:4200';
+        this._apiBase = 'http://localhost:8000/api';
     }
 
     getResource = async (url) => {
@@ -14,35 +14,40 @@ export default class CoursesApi{
 
     getAllModules = async () => {
         const res = await this.getResource(`/modules/`);
+        if (res == null) {
+            return []
+        }
         return res.map(this._transformModule);
     }
 
     getAllLessons = async () => {
         const res = await this.getResource(`/lessons/`);
+        if (res == null) {
+            return []
+        }
         return res.map(this._transformModule);
     }
 
     getModulesByCourseId = async (id) =>{
-        const res = await this.getResource(`/modules/`);
-        return res.filter((elem)=>{
-            if (elem.c_id == id){
-                return elem
-            }
-        }).map(this._transformModule);
+        const res = await this.getResource(`/modules/by_course/${id}`);
+        if (res == null) {
+            return []
+        }
+        return res.map(this._transformModule);
     }
 
     getLessonsByModuleId = async (id) =>{
-        const res = await this.getResource(`/lessons/`);
-        return res.filter((elem)=>{
-            if (elem.m_id == id){
-                return elem
-            }
-        }).map(this._transformLesson);
+        const res = await this.getResource(`/lessons/by_module/${id}`);
+        if (res == null) {
+            return []
+        }
+        return res.map(this._transformLesson);
     }
 
     getAllCourses = async () => {
         const res = await this.getResource(`/courses/`);
         const modules = await  this.getAllModules()
+
         return res.map(course=>{
             let newElem = {...course, lessonsCount: 0}
             let lessonsCount = 0

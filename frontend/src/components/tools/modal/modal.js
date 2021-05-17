@@ -17,10 +17,11 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 import {Link} from "react-router-dom";
+import {CheckCircleIcon, ExclamationCircleIcon, InformationCircleIcon} from "@heroicons/react/outline";
 
 export default function Modal(props) {
 
-    let {open, title, info, buttonText, buttonLink} = props
+    let {type, open, title, info, buttonText, buttonLink} = props
     let [isOpen, setIsOpen] = useState(open)
 
     function closeModal() {
@@ -40,7 +41,7 @@ export default function Modal(props) {
                     className="fixed inset-0 z-10 overflow-y-auto"
                     onClose={closeModal}
                 >
-                    <div className="min-h-screen px-4 text-center">
+                    <div className="min-h-screen px-4 text-center focus:outline-none">
                         <Transition.Child
                             as={Fragment}
                             enter="ease-out duration-300"
@@ -65,24 +66,35 @@ export default function Modal(props) {
                             leaveFrom="opacity-100 scale-100"
                             leaveTo="opacity-0 scale-95"
                         >
-                            <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
-                                <Dialog.Title
-                                    as="h3"
-                                    className="text-lg font-medium leading-6 text-gray-900"
-                                >
-                                    {title}
-                                </Dialog.Title>
-                                <div className="mt-2">
-                                    <p className="text-sm text-gray-500">
-                                        {info}
-                                    </p>
+                            <div className="focus:outline-none inline-block w-full max-w-md px-4 py-5 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-xl">
+                                <div className="grid grid-cols-7 gap-4">
+                                    <div className="col-span-1 flex justify-center">
+                                        {type === 'error' ? <ExclamationCircleIcon className="text-red-500 w-10 h-10"/>: ''}
+                                        {type === 'info' ? <InformationCircleIcon className="text-blue-500 w-10 h-10"/>: ''}
+                                        {type === 'success' ? <CheckCircleIcon className="text-green-500 w-10 h-10"/>: ''}
+                                    </div>
+                                    <div className="col-span-6">
+                                        <Dialog.Title
+                                            as="h3"
+                                            className="text-lg font-medium leading-6 text-gray-900"
+                                        >
+                                            {title}
+                                        </Dialog.Title>
+                                        <div className="mt-2">
+                                            <p className="text-sm text-gray-500">
+                                                {info}
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div className="mt-4">
+                                <div className="mt-5 flex justify-end focus:outline-none">
                                     <Link to={buttonLink ? buttonLink : '/'}>
                                         <button
                                             type="button"
-                                            className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+                                            className={`${type === 'info' ? `bg-blue-500 hover:bg-blue-700 focus-visible:ring-blue-500`: ``}
+                                                        ${type === 'success' ? `bg-green-500 hover:bg-green-700 focus-visible:ring-green-500`: ``}
+                                                        ${type === 'error' ? `bg-red-500 hover:bg-red-700 focus-visible:ring-red-500`: ``} focus:outline-none focus:ring-2 inline-flex justify-center px-4 py-2 text-sm font-medium text-white border border-transparent rounded-md transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2`}
                                             onClick={closeModal}
                                         >
                                             {buttonText ? buttonText : 'OK'}

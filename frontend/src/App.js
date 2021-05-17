@@ -1,5 +1,5 @@
-import React,{Component, useState} from "react"
-import {BrowserRouter as Router, Route} from 'react-router-dom'
+import React, {Component, useEffect, useState} from "react"
+import {BrowserRouter as Router, Link, Route} from 'react-router-dom'
 import './App.css'
 import CoursesSlider from "./components/main-page-components/courses-slider"
 import Navbar from './components/main-page-components/navbar'
@@ -13,100 +13,102 @@ import Spinner from "./components/main-page-components/spinner";
 import ProfilePage from "./components/profile-page-components/profile-page";
 import LessonPage from "./components/lesson-page-components/lesson-page";
 import PaymentsPage from "./components/payment-page-components/payments-page";
+import AuthService from "./components/auth-service";
 
-export default class App extends Component{
-  constructor(props){
-    super(props)
 
-      this.state = {
-        coursesList: [],
-        coursesSlider: []
-      }
-  }
+export default function App(){
+    const [courses, setCourses] = useState([])
 
-  api = new CoursesApi();
+    let api = new CoursesApi();
+    let authService = new AuthService()
 
-  componentDidMount() {
-      this.api.getAllCourses().then(data=>{
-          this.setState({courses:data})
-      })
-  }
+    useEffect(()=>{
+        if (courses.length == 0){
+            api.getAllCourses().then(data=>{
+                setCourses(data)
+            })
+        }
+    },[courses])
 
-    render() {
-        const {courses} = this.state
+    let checkAuth = () =>{
+      (
+          async () =>{
+              let isAuthorized = await authService.isAuthorized()
+              if (isAuthorized) {
+                  console.log(`User name: ${isAuthorized.name}`)
+              }
+          }
+      )()
+    }
 
-        if(courses){
-            return (
-                <Router>
-                    <Route exact path="/">
-                        <Navbar activeLink="main"/>
-                        <div className="app">
+    if(courses.length != 0){
+        return (
+            <Router>
+                <Route exact path="/">
+                    <Navbar activeLink="main"/>
+                    <div className="app">
+                        <main>
+                            <CoursesSlider courses = {courses}/>
+                            <CoursesList courses = {courses}/>
+                        </main>
+                        <Footer/>
+                    </div>
+                </Route>
+                <Route exact path='/signin/'>
+                    <Navbar/>
+                    <SignIn/>
+                </Route>
+                <Route exact path='/signup/'>
+                    <Navbar/>
+                    <SignUp/>
+                </Route>
+                <Route exact path='/course/:id/' render={({match})=>{
+                    const {id} = match.params
+                    return (
+                        <>
+                            <Navbar/>
                             <main>
-                                <CoursesSlider courses = {courses}/>
-                                <CoursesList courses = {courses}/>
+                                <CoursePage courseId={id}/>
                             </main>
                             <Footer/>
-                        </div>
-                    </Route>
-                    <Route exact path='/signin/'>
-                        <Navbar/>
-                        <SignIn/>
-                    </Route>
-                    <Route exact path='/signup/' component={SignUp}>
-                        <Navbar/>
-                        <SignUp/>
-                    </Route>
-                    <Route exact path='/course/:id/' render={({match})=>{
-                        const {id} = match.params
-                        console.log(id);
-                        return (
-                            <>
-                                <Navbar/>
-                                <main>
-                                    <CoursePage courseId={id}/>
-                                </main>
-                                <Footer/>
-                            </>
-                        )
-                    }}/>
-                    <Route exact path='/contacts/'>
-                        <Navbar activeLink='contacts'/>
-                        <ContactsPage/>
-                    </Route>
-                    <Route exact path='/profile/' render={()=>{
-                        return (
-                            <>
-                                <Navbar/>
-                                <main>
-                                    <ProfilePage/>
-                                </main>
-                            </>
-                        )
-                    }}/>
-                    <Route exact path='/lesson/:id' render={({match})=>{
-                        const {id} = match.params
-                        return (
-                            <LessonPage id={id}/>
-                        )
-                    }}/>
-                    <Route exact path='/payments/:id' render={({match})=>{
-                            const {id} = match.params
-                            return (
-                                <>
-                                    <Navbar/>
-                                    <main>
-                                        <PaymentsPage courseId={id}/>
-                                    </main>
-                                </>
-                            )
-                        }
-                    } />
-                </Router>
-            )
-        } else {
-            return <Spinner/>
-        }
-
-
-  }
+                        </>
+                    )
+                }}/>
+                <Route exact path='/contacts/'>
+                    <Navbar activeLink='contacts'/>
+                    <ContactsPage/>
+                </Route>
+                <Route exact path='/profile/' render={()=>{
+                    return (
+                        <>
+                            <Navbar/>
+                            <main>
+                                <ProfilePage/>
+                            </main>
+                        </>
+                    )
+                }}/>
+                <Route exact path='/lesson/:id' render={({match})=>{
+                    const {id} = match.params
+                    return (
+                        <LessonPage id={id}/>
+                    )
+                }}/>
+                <Route exact path='/payments/:id' render={({match})=>{
+                    const {id} = match.params
+                    return (
+                        <>
+                            <Navbar/>
+                            <main>
+                                <PaymentsPage courseId={id}/>
+                            </main>
+                        </>
+                    )
+                }
+                } />
+            </Router>
+        )
+    } else {
+        return <Spinner/>
+    }
 }

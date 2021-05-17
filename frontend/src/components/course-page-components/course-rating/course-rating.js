@@ -5,8 +5,6 @@ import {ProgressBar} from 'react-bootstrap'
 import './course-rating.css'
 
 export default function CourseRating(){
-
-
     return (
         <div className="mb-24">
             <h1 className="text-3xl font-bold">Students feedback</h1>

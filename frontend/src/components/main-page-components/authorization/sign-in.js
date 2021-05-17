@@ -1,20 +1,85 @@
 import React, {useEffect, useState} from 'react'
-import { Link } from 'react-router-dom'
+import { Link,Redirect } from 'react-router-dom'
 import './auth.css'
+import Spinner from "../spinner";
+import Modal from "../../tools/modal";
+import AuthService from "../../auth-service";
 
 export default function SignIn(){
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [isLoader, setLoader] = useState(false)
+    const [isModal, setIsModal] = useState(false)
+    const [modalContainer, setModal] = useState(false)
+    const [redirect, setRedirect] = useState(false)
 
-    let submit = (e) => {
+    let authService = new AuthService()
+
+    let submit = async (e) => {
         e.preventDefault()
-        console.log(email, password)
+        setLoader(true)
+
+        if (email == "" || password == ""){
+            setIsModal(true)
+            setModal(<Modal open={true} info="Enter all entities!" title="Error" buttonLink="#error" type="error"/>)
+        } else {
+            // Call sign in function
+            let status = await authService.SignIn(email, password);
+
+            if (status == "Incorrect password") {
+                setLoader(false)
+                setIsModal(true)
+                setModal(<Modal open={true} info="Incorrect password" buttonLink="#error" type="error" title="Error"/>)
+            }
+            if (status == "User not found") {
+                setLoader(false)
+                setIsModal(true)
+                setModal(<Modal open={true} info="User with current email not found" buttonLink="#error" type="error" title="Error"/>)
+            }
+            if (status == "Could not sign in") {
+                setLoader(false)
+                setIsModal(true)
+                setModal(<Modal open={true} info="Server error, try later" buttonLink="#error" type="info" title="Info"/>)
+            }
+            if (status == "Success"){
+                setLoader(false)
+                setIsModal(true)
+                setModal(<Modal open={true} info="You signed in!" buttonText="Go to main page" buttonLink="/" type="success" title="Success"/>)
+                setTimeout(()=>{
+                    setRedirect(true)
+                }, 3000)
+            }
+        }
+        setLoader(false)
+    }
+
+    if (redirect) {
+        return <Redirect to="/"/>
+    }
+
+    if (isLoader) {
+        return (
+            <div className="auth-body">
+                <div className="auth-container">
+                    <Spinner/>
+                </div>
+            </div>
+        )
+    }
+
+    let modal
+    if (isModal) {
+        modal = modalContainer
+        setTimeout(()=>{setIsModal(false)}, 5000)
+    } else {
+        modal = null
     }
 
     return (
         <>
             <div className="auth-body">
                 <div className="auth-container">
+                    {modal}
                     <p>Sign in</p>
                     <form className="auth-form" onSubmit={(e)=>submit(e)}>
                         <label for="email" className="block">

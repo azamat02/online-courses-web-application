@@ -4,8 +4,8 @@ import { Dialog } from '@headlessui/react'
 
 
 export default function ContactsPage(){
-
     let [isOpen, setIsOpen] = useState(true)
+
     return (
         <main>
             <div className="container mt-12">

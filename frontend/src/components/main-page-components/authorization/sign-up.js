@@ -1,15 +1,22 @@
 import React, {useEffect, useState} from 'react'
 import { Link } from 'react-router-dom'
 import './auth.css'
+import Spinner from "../spinner";
+import Modal from "../../tools/modal";
+import AuthService from "../../auth-service";
 
 
 export default function SignUp(){
+    let readyToSubmit = false
     const [email, setEmail] = useState('')
     const [name, setName] = useState('')
     const [surname, setSurname] = useState('')
     const [login, setLogin] = useState('')
     const [pass, setPass] = useState('')
     const [pass2, setPass2] = useState('')
+    const [isLoader, setLoader] = useState(false)
+    const [isModal, setIsModal] = useState(false)
+    const [modalContainer, setModal] = useState(false)
 
     const [emailError, setErrorEmail] = useState(false)
     const [loginError, setErrorLogin] = useState(false)
@@ -18,13 +25,19 @@ export default function SignUp(){
     const [nameError, setErrorName] = useState(false)
     const [surnameError, setErrorSurname] = useState(false)
 
-
+    let authService = new AuthService()
 
     let changeData = (e, type) => {
         let text = e.target.value
 
         if(type == "email"){
             setEmail(text)
+            let regex = /^.{3,}$/ // min-3
+            if(!regex.test(text)){
+                setErrorEmail("Email must be entered")
+            } else {
+                setErrorEmail(false)
+            }
         }
         if(type == "login"){
             setLogin(text)
@@ -63,12 +76,6 @@ export default function SignUp(){
 
     // Check pass same and for length
     useEffect(()=>{
-        if (pass == "" || pass2 == ""){
-            setErrorPass(false)
-            setErrorPass2(false)
-            return
-        }
-
         if (pass != pass2){
             setErrorPass("Entered passwords different!")
             setErrorPass2("Entered passwords different!")
@@ -86,11 +93,39 @@ export default function SignUp(){
                 setErrorPass2(false)
             }
         }
+
+        if ((!emailError && !loginError && !passError && !pass2Error && !nameError && !surnameError)
+            &&  (email != "" && login != "" && name != "" && surname != "" && pass != "" && pass2 != "") &&
+            (pass == pass2)) {
+            readyToSubmit = true
+            console.log("Form is ready to submit")
+        } else {
+            readyToSubmit = false
+        }
     })
 
-    let submit = (e)=>{
+    let submit = async (e)=>{
         e.preventDefault()
-        console.log(email, login, name, surname, pass, pass2)
+
+        if (readyToSubmit) {
+            setLoader(true)
+
+            let id = await authService.SignUp(email, name, surname, login, pass)
+
+            if (id == null) {
+                setLoader(false)
+                setIsModal(true)
+                setModal(<Modal open={true} info="Entered email is already exist! Try another one." buttonLink="#info" type="info" title="Info"/>)
+            } else {
+                setLoader(false)
+                setIsModal(true)
+                setModal(<Modal open={true} info="You successfully registered! Sign in to continue." buttonText="Sign in" buttonLink="/signin" type="success" title="Success"/>)
+            }
+
+        } else {
+            setIsModal(true)
+            setModal(<Modal open={true} info="Please enter all values correctly!" buttonLink="#error" type="error" title="Error"/>)
+        }
     }
 
     // Errors text
@@ -101,11 +136,27 @@ export default function SignUp(){
     let error3 = passError ? <Error message={passError}/> : null
     let error4 = pass2Error ? <Error message={pass2Error}/> : null
 
+    if (isLoader) {
+        return (
+            <div className="auth-body">
+                <div className="auth-container">
+                    <Spinner/>
+                </div>
+            </div>
+        )
+    }
 
-
+    let modal
+    if (isModal) {
+        modal = modalContainer
+        setTimeout(()=>{setIsModal(false)}, 5000)
+    } else {
+        modal = null
+    }
 
     return (
         <>
+            {modal}
             <div className="auth-body">
                 <div className="auth-container">
                     <p>Sign up</p>

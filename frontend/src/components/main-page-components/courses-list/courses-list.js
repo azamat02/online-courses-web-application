@@ -1,42 +1,32 @@
-import React, {Component} from 'react'
+import React, {Component, useState} from 'react'
 import CourseItem from '../course-item/course-item'
 import './courses-list.css'
 import Spinner from "../spinner";
 
-export default class CoursesList extends Component{
-    constructor(props) {
-        super(props)
+export default function CoursesList(props){
+    const [courses, setCourses] = useState(props.courses)
 
-        this.state = {
-            courses: props.courses
-        }
-    }
-
-    renderItems = (arr)=>{
+    let renderItems = (arr)=>{
         return arr.map((elem)=>{
             let {courseLessons, courseImage, courseTitle, courseDesc, courseId} = elem
             return <CourseItem courseLessons={courseLessons} courseImage={courseImage} courseTitle={courseTitle} courseDesc={courseDesc} courseId={courseId}/>
         })
     }
 
-    render() {
+    let data = null
 
-        let {courses} = this.state
-        let data = null
-
-        if(!courses) {
-            data = <Spinner/>
-        } else {
-            data = this.renderItems(courses)
-        }
-
-        return (
-            <>
-                <p className="title">Courses</p>
-                <div className="courses-list">
-                    {data}
-                </div>
-            </>
-        )
+    if(!courses) {
+        data = <Spinner/>
+    } else {
+        data = renderItems(courses)
     }
+
+    return (
+        <>
+            <p className="title">Courses</p>
+            <div className="courses-list">
+                {data}
+            </div>
+        </>
+    )
 }
