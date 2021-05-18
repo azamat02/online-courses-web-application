@@ -29,7 +29,7 @@ export default function Navbar(props){
     ) : (
         <>
             <li className="block ml-2 transition">
-                <div className="relative inline-block text-left">
+                <div className="relative z-10 inline-block text-left">
                     <Menu>
                         {({ open }) => (
                             <>

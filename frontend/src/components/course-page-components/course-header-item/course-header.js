@@ -10,7 +10,7 @@ export default function CourseHeader(props){
             </div>
             <div className="h-72 relative course-info w-1/2 p-4">
                 <p className="text-4xl font-bold text-gray-900">{courseTitle}</p>
-                <p className="text-sm mt-9 w-4/5">
+                <p className="text-sm mt-9 w-4/5 mb-10">
                     {courseDesc}
                 </p>
                 <Link to={`/payments/${courseId}`}>

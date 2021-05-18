@@ -1,13 +1,15 @@
-import React, {Component, useEffect, useState} from 'react'
+import React, {Component, useContext, useEffect, useState} from 'react'
 import CoursesApi from "../../api";
 import Spinner from "../../main-page-components/spinner";
 import ListBox from "../../tools/listbox";
 import PaymentForm from "../../tools/payment-form";
 import {BookOpenIcon, CashIcon, LockClosedIcon, UserIcon} from "@heroicons/react/outline";
 import Modal from "../../tools/modal";
+import {AppContext} from "../../../stateManager";
 
 export default function PaymentsPage(props) {
-    const [isAuthorized, setIsAuthorized] = useState(true)
+    const { appState } = useContext(AppContext)
+    const { isAuthorized, userData } = appState
     const [courseId, setCourseId] = useState(props.courseId)
     const [course, setCourse] = useState(null)
 
@@ -22,7 +24,7 @@ export default function PaymentsPage(props) {
     })
 
     if (!isAuthorized) {
-        return <Modal type="info" info="You are not authorized. Please sign in/up first" title="Info" open={true}/>
+        return <Modal info="You are not authorized! Please sign in/up." title="Error" type="error" open={true} buttonText="Sign in" buttonLink="/signin"/>
     }
 
     if (!course) {
