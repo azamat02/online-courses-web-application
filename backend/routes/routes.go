@@ -6,6 +6,10 @@ import (
 )
 
 func Setup(app *fiber.App) {
+	//User routes
+	app.Get("api/users/:id", controllers.GetUser)
+	app.Get("api/users", controllers.GetAllUsers)
+
 	//Authorization routes
 	app.Post("api/sign_up", controllers.SignUp)
 	app.Post("api/sign_in", controllers.SignIn)
