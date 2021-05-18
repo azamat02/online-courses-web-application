@@ -29,7 +29,7 @@ export default function CoursePage(props){
                 setModules(data)
             })
         }
-    })
+    }, [course, modules])
 
     if(!course || !modules || !lessons){
         return <Spinner/>
@@ -118,7 +118,7 @@ export default function CoursePage(props){
                 <CourseRating/>
 
                 {/*Comments section*/}
-                <CommentsSection/>
+                <CommentsSection courseId={props.courseId}/>
             </div>
         </>
     )

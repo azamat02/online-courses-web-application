@@ -12,6 +12,22 @@ export default class CoursesApi{
         return await res.json();
     }
 
+    getAllComments = async () => {
+        const res = await this.getResource(`/comments/`);
+        if (res == null) {
+            return []
+        }
+        return res.map(this._transformComment());
+    }
+
+    getAllUsers = async () => {
+        const res = await this.getResource(`/users/`);
+        if (res == null) {
+            return []
+        }
+        return res.map(this._transformUser);
+    }
+
     getAllModules = async () => {
         const res = await this.getResource(`/modules/`);
         if (res == null) {
@@ -44,6 +60,14 @@ export default class CoursesApi{
         return res.map(this._transformLesson);
     }
 
+    getCommentsByCourseId = async (id) => {
+        const res = await this.getResource(`/comments/by_course/${id}`);
+        if (res == null) {
+            return []
+        }
+        return res.map(this._transformComment);
+    }
+
     getAllCourses = async () => {
         const res = await this.getResource(`/courses/`);
         const modules = await  this.getAllModules()
@@ -63,9 +87,19 @@ export default class CoursesApi{
         }).map(this._transformCourse);
     }
 
+    getUser = async (id) => {
+        const res = await this.getResource(`/users/${id}`);
+        return this._transformUser(res);
+    }
+
     getCourse = async (id) => {
         const res = await this.getResource(`/courses/${id}`);
         return this._transformCourse(res);
+    }
+
+    getComment = async (id) => {
+        const res = await this.getResource(`/comments/${id}`);
+        return this._transformComment(res);
     }
 
     getModule = async (id) => {
@@ -84,6 +118,16 @@ export default class CoursesApi{
         } else {
             return 'no data'
         }
+    }
+
+    _transformUser = (user) => {
+        return {
+            userId: this.isSet(user.id),
+            userName: this.isSet(user.name),
+            userSurname: this.isSet(user.surname),
+            userLogin: this.isSet(user.login),
+            userEmail: this.isSet(user.email),
+        };
     }
 
     _transformCourse = (course) => {
@@ -117,5 +161,17 @@ export default class CoursesApi{
             lessonContent: this.isSet(lesson.content)
         };
     }
+
+    _transformComment = (comment) => {
+        return {
+            commentId: this.isSet(comment.id),
+            commentText: this.isSet(comment.ctext),
+            commentCourseId: this.isSet(comment.c_id),
+            commentUserId: this.isSet(comment.u_id),
+            commentRate: this.isSet(comment.rate),
+            commentCreatedDate: this.isSet(comment.created_date),
+        };
+    }
+
 }
 
