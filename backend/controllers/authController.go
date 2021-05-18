@@ -85,6 +85,14 @@ func SignIn(c *fiber.Ctx) error {
 		})
 	}
 
+	log := models.LogOfUser{
+		UserId: int(user.Id),
+		Enter_date: time.Now(),
+	}
+
+	//Creating log of entered user
+	database.DB.Create(&log)
+
 	//Creating jwt token
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 		Issuer: strconv.Itoa(int(user.Id)),
