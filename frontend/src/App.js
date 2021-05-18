@@ -31,14 +31,17 @@ export default function App(){
             async () =>{
                 let res = await authService.isAuthorized()
                 if (res !== false) {
-                    appDispatch({type: 'authTrue', payload: {user: res}})
+                    if (appState.isAuthorized == false) {
+                        appDispatch({type: 'authTrue', payload: {user: res}})
+                    }
                 } else {
-                    appDispatch({type: 'authFalse'})
+                    if (appState.isAuthorized == true) {
+                        appDispatch({type: 'authFalse'})
+                    }
                 }
             }
         )()
-    })
-
+    }, [appState])
 
     useEffect(()=>{
         if (courses.length == 0){
@@ -47,6 +50,8 @@ export default function App(){
             })
         }
     },[courses])
+
+    console.log(1)
 
     if(courses.length != 0){
         return (
@@ -58,6 +63,7 @@ export default function App(){
                                 await authService.LogOut()
                             }
                         )()
+                        appDispatch({type: 'authFalse'})
                         return <Redirect to="/"/>
                     }}/>
                     <Route exact path="/">

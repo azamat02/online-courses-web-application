@@ -1,4 +1,4 @@
-import React, {Component, useContext, useState} from 'react'
+import React, {Component, useContext, useEffect, useState} from 'react'
 import {ProgressBar} from 'react-bootstrap'
 import '../../course-page-components/course-rating/course-rating.css'
 import {
@@ -9,19 +9,78 @@ import {
 } from "@heroicons/react/outline";
 import Modal from "../../tools/modal";
 import {AppContext} from "../../../stateManager";
+import CoursesApi from "../../api";
+import Spinner from "../../main-page-components/spinner";
 
 export default function ProfilePage() {
     const [activeButton, setActiveButton] = useState(0)
     const { appState } = useContext(AppContext)
     const { isAuthorized, userData } = appState
+    const [purchasedCourses, setPurchasedCourses] = useState(null)
+    const [allCourses, setAllCourses] = useState(null)
+    let api = new CoursesApi()
+
+    useEffect(()=>{
+        if (purchasedCourses == null && allCourses == null){
+            api.getPurchasedCoursesByUsedId(userData.id).then(data=>{
+                setPurchasedCourses(data)
+            })
+            api.getAllCourses().then(data=>{
+                setAllCourses(data)
+            })
+        }
+    }, [purchasedCourses, allCourses])
 
     if (!isAuthorized) {
         return <Modal info="You are not authorized! Please sign in/up." title="Error" type="error" open={true} buttonText="Sign in" buttonLink="/signin"/>
     }
 
+    if (!purchasedCourses || !allCourses) {
+        return <Spinner/>
+    }
+
     let changeButton = (num) => {
         setActiveButton(num)
     }
+
+    let renderPurchasedCourses = purchasedCourses.length != 0 ? purchasedCourses.map(elem=>{
+        let currentCourse
+        allCourses.forEach(item=>{
+            if (item.courseId == elem.purchaseCourseId) {
+                currentCourse = item
+            }
+        })
+
+        console.log(currentCourse)
+        return (
+            <>
+                <div className="px-6 mb-2 py-4 cursor-pointer">
+                    <p className="mb-3 text-2xl font-bold align-middle">
+                        <AcademicCapIcon className="w-10 h-10 inline mb-1"/>
+                        {currentCourse.courseTitle}
+                        <p className="text-right inline ml-10 text-gray-600 font-medium text-sm">Purchased date: {elem.purchaseDate}</p>
+                        <p className="text-right inline ml-10 text-gray-600 font-medium text-sm">Last study date: 20-05-2021</p>
+                    </p>
+                    <p className="text-gray-700 font-bold">Progress 60%</p>
+                    <ProgressBar className="mb-6" now={60} />
+                    <button className="bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50 py-3 px-10 transition font-bold text-white rounded-lg hover:bg-green-600">
+                        <LightningBoltIcon className="mb-1 w-5 h-5 inline mr-2"/>
+                        Continue study
+                    </button>
+                    <button className="ml-10 bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50 py-3 px-10 transition font-bold text-green-700 rounded-lg hover:bg-green-200">
+                        <PresentationChartBarIcon className="mb-1 w-5 h-5 inline mr-2"/>
+                        View analytics
+                    </button>
+                </div>
+                <hr/>
+            </>
+        )
+    }) : (
+        <div className="px-6 py-4">
+            You dont have any purchased courses. <a href="/" className="text-blue-500 underline">Chech courses</a>
+        </div>
+    )
+
 
     return (
         <>
@@ -84,43 +143,7 @@ export default function ProfilePage() {
                         </div>
                         <hr className="mt-2 mb-2"/>
                         <div>
-                            <div className="px-6 mb-2 py-4 cursor-pointer">
-                                <p className="mb-3 text-2xl font-bold align-middle">
-                                    <AcademicCapIcon className="w-10 h-10 inline mb-1"/>
-                                    Python course
-                                    <p className="text-right inline ml-10 text-gray-600 font-medium text-sm">Purchased date: 20-05-2021</p>
-                                    <p className="text-right inline ml-10 text-gray-600 font-medium text-sm">Last study date: 20-05-2021</p>
-                                </p>
-                                <p className="text-gray-700 font-bold">Progress 60%</p>
-                                <ProgressBar className="mb-6" now={60} />
-                                <button className="bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50 py-3 px-10 transition font-bold text-white rounded-lg hover:bg-green-600">
-                                    <LightningBoltIcon className="mb-1 w-5 h-5 inline mr-2"/>
-                                    Continue study
-                                </button>
-                                <button className="ml-10 bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50 py-3 px-10 transition font-bold text-green-700 rounded-lg hover:bg-green-200">
-                                    <PresentationChartBarIcon className="mb-1 w-5 h-5 inline mr-2"/>
-                                    View analytics
-                                </button>
-                            </div>
-                            <hr/>
-                            <div className="px-6 mb-2 py-4 cursor-pointer">
-                                <p className="mb-3 text-2xl font-bold align-middle">
-                                    <AcademicCapIcon className="w-10 h-10 inline mb-1"/>
-                                    Golang course
-                                    <p className="text-right inline ml-10 text-gray-600 font-medium text-sm">Purchased date: 20-05-2021</p>
-                                    <p className="text-right inline ml-10 text-gray-600 font-medium text-sm">Last study date: 20-05-2021</p>
-                                </p>
-                                <p className="text-gray-700 font-bold">Progress 80%</p>
-                                <ProgressBar className="mb-6" now={80} />
-                                <button className="bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50 py-3 px-10 transition font-bold text-white rounded-lg hover:bg-green-600">
-                                    <LightningBoltIcon className="mb-1 w-5 h-5 inline mr-2"/>
-                                    Continue study
-                                </button>
-                                <button className="ml-10 bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50 py-3 px-10 transition font-bold text-green-700 rounded-lg hover:bg-green-200">
-                                    <PresentationChartBarIcon className="mb-1 w-5 h-5 inline mr-2"/>
-                                    View analytics
-                                </button>
-                            </div>
+                            {renderPurchasedCourses}
                         </div>
                     </div>
                 </div>

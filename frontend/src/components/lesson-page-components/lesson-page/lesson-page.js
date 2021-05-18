@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, useContext} from 'react'
 import CoursesApi from "../../api";
 import Spinner from "../../main-page-components/spinner";
 import {Link} from "react-router-dom";
@@ -10,8 +10,11 @@ import { Fragment, useEffect, useRef, useState } from 'react'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import ModuleItem from "../../course-page-components/module-item";
 import Modal from "../../tools/modal";
+import {AppContext} from "../../../stateManager";
 
 export default function LessonPage(props){
+    const { appState } = useContext(AppContext)
+    const {isAuthorized, userData} = appState
     const [id, setId] = useState(props.id)
     const [lesson, setLesson] = useState(null)
     const [modules, setModules] = useState(null)
@@ -32,11 +35,11 @@ export default function LessonPage(props){
         }
     }, [modules, lesson])
 
-    // if (!this.isAuthorized) {
-    //     return <Modal type="info" info="You are not authorized. Please sign in/up first" buttonLink={`/signin`} buttonText="Sign in" title="Error" open={true}/>
-    // }
+    if (!isAuthorized) {
+        return <Modal type="error" info="You are not authorized. Please sign in/up first" buttonLink={`/signin`} buttonText="Sign in" title="Error" open={true}/>
+    }
 
-    if (!lesson || !modules) {
+    if (!lesson || !modules || userData == null) {
         return <Spinner/>
     }
 
@@ -94,7 +97,7 @@ export default function LessonPage(props){
                                         <Menu.Button className="focus:outline-none inline-flex justify-center w-full">
                                             <button className="hover:bg-indigo-600 focus:ring-2 transition flex items-center text-gray-50 relative focus:outline-none px-5 py-2 bg-indigo-500 rounded-lg">
                                                         <span className="text-md mr-1 font-bold">
-                                                            Azamat
+                                                            {userData.name}
                                                         </span>
                                                 <UserCircleIcon className="inline w-7 h-7"/>
                                             </button>
@@ -144,8 +147,8 @@ export default function LessonPage(props){
                                                     <hr className="mx-7"/>
                                                     <Menu.Item>
                                                         {({ active }) => (
-                                                            <Link
-                                                                to="/signout/"
+                                                            <a
+                                                                href="/logout/"
                                                                 className={`${
                                                                     active
                                                                         ? "bg-gray-100 text-gray-900"
@@ -154,7 +157,7 @@ export default function LessonPage(props){
                                                             >
                                                                 <LogoutIcon className="w-5 h-5 inline mr-2"/>
                                                                 Sign out
-                                                            </Link>
+                                                            </a>
                                                         )}
                                                     </Menu.Item>
                                                 </div>

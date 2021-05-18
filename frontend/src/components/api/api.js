@@ -44,6 +44,33 @@ export default class CoursesApi{
         return res.map(this._transformModule);
     }
 
+    getAllCourses = async () => {
+        const res = await this.getResource(`/courses/`);
+        const modules = await  this.getAllModules()
+
+        return res.map(course=>{
+            let newElem = {...course, lessonsCount: 0}
+            let lessonsCount = 0
+
+            modules.forEach(elem=>{
+                if(elem.moduleCourseId == course.id){
+                    lessonsCount += + elem.moduleNumberOfLessons
+                }
+            })
+
+            newElem.lessonsCount = lessonsCount
+            return newElem
+        }).map(this._transformCourse);
+    }
+
+    getPurchasedCoursesByUsedId = async (id) => {
+        const res = await this.getResource(`/purchased/by_user/${id}`);
+        if (res == null) {
+            return []
+        }
+        return res.map(this._transformPurchasedCourses);
+    }
+
     getModulesByCourseId = async (id) =>{
         const res = await this.getResource(`/modules/by_course/${id}`);
         if (res == null) {
@@ -66,25 +93,6 @@ export default class CoursesApi{
             return []
         }
         return res.map(this._transformComment);
-    }
-
-    getAllCourses = async () => {
-        const res = await this.getResource(`/courses/`);
-        const modules = await  this.getAllModules()
-
-        return res.map(course=>{
-            let newElem = {...course, lessonsCount: 0}
-            let lessonsCount = 0
-
-            modules.forEach(elem=>{
-                if(elem.moduleCourseId == course.id){
-                    lessonsCount += + elem.moduleNumberOfLessons
-                }
-            })
-
-            newElem.lessonsCount = lessonsCount
-            return newElem
-        }).map(this._transformCourse);
     }
 
     getUser = async (id) => {
@@ -170,6 +178,15 @@ export default class CoursesApi{
             commentUserId: this.isSet(comment.u_id),
             commentRate: this.isSet(comment.rate),
             commentCreatedDate: this.isSet(comment.created_date),
+        };
+    }
+
+    _transformPurchasedCourses = (purchase) => {
+        return {
+            purchaseId: this.isSet(purchase.id),
+            purchaseUserId: this.isSet(purchase.u_id),
+            purchaseCourseId: this.isSet(purchase.c_id),
+            purchaseDate: this.isSet(purchase.purchased_date),
         };
     }
 
