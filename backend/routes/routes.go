@@ -38,4 +38,9 @@ func Setup(app *fiber.App) {
 	app.Get("api/comments/by_course/:id", controllers.GetCommentsByCourseId)
 	app.Get("api/comments", controllers.GetAllComments)
 	app.Post("api/comments", controllers.CreateComment)
+
+	//Purchased courses routes
+	app.Get("api/purchased/", controllers.GetAllPurchasedCourses)
+	app.Get("api/purchased/by_user/:id", controllers.GetAllUserPurchasedCourses)
+	app.Post("api/purchased", controllers.CreatePurchasedCourse)
 }
