@@ -1,4 +1,4 @@
-import React, {Component, useState} from 'react'
+import React, {Component, useContext, useState} from 'react'
 import {ProgressBar} from 'react-bootstrap'
 import '../../course-page-components/course-rating/course-rating.css'
 import {
@@ -8,9 +8,16 @@ import {
     UserIcon
 } from "@heroicons/react/outline";
 import Modal from "../../tools/modal";
+import {AppContext} from "../../../stateManager";
 
 export default function ProfilePage() {
     const [activeButton, setActiveButton] = useState(0)
+    const { appState } = useContext(AppContext)
+    const { isAuthorized, userData } = appState
+
+    if (!isAuthorized) {
+        return <Modal info="You are not authorized! Please sign in/up." title="Error" type="error" open={true} buttonText="Sign in" buttonLink="/signin"/>
+    }
 
     let changeButton = (num) => {
         setActiveButton(num)
@@ -55,15 +62,15 @@ export default function ProfilePage() {
                         <hr className="mt-2 "/>
                         <div className="grid grid-cols-6 bg-gray-100 p-6">
                             <div className="text-gray-600 font-medium col-span-2">Full name</div>
-                            <div className="font-medium col-span-4">Azamat Saiduly</div>
+                            <div className="font-medium col-span-4">{userData.name+" "+userData.surname}</div>
                         </div>
                         <div className="grid grid-cols-6 p-6">
                             <div className="text-gray-600 font-medium col-span-2">Email adress</div>
-                            <div className="font-medium col-span-4">azamattolegenov1@gmail.com</div>
+                            <div className="font-medium col-span-4">{userData.email}</div>
                         </div>
                         <div className="grid grid-cols-6 bg-gray-100 p-6">
                             <div className="text-gray-600 font-medium col-span-2">Login</div>
-                            <div className="font-medium col-span-4">azamat02</div>
+                            <div className="font-medium col-span-4">{userData.login}</div>
                         </div>
                     </div>
                 </div>
