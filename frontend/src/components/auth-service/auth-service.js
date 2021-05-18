@@ -48,4 +48,12 @@ export default class AuthService extends Component{
 
         return json.id
     }
+
+    LogOut = async () => {
+        await fetch("http://localhost:8000/api/logout", {
+            method: "POST",
+            headers: {'Content-type': 'application/json'},
+            credentials: 'include'
+        })
+    }
 }

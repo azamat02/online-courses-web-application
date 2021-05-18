@@ -1,11 +1,14 @@
-import React, {useEffect, useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import { Link,Redirect } from 'react-router-dom'
 import './auth.css'
 import Spinner from "../spinner";
 import Modal from "../../tools/modal";
 import AuthService from "../../auth-service";
+import {AppContext} from "../../../stateManager";
 
 export default function SignIn(){
+    const { appState, appDispatch } = useContext(AppContext)
+
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [isLoader, setLoader] = useState(false)
@@ -42,6 +45,8 @@ export default function SignIn(){
                 setModal(<Modal open={true} info="Server error, try later" buttonLink="#error" type="info" title="Info"/>)
             }
             if (status == "Success"){
+                let userData = await authService.isAuthorized()
+                appDispatch({type: "authTrue", payload: {user: userData}})
                 setLoader(false)
                 setIsModal(true)
                 setModal(<Modal open={true} info="You signed in!" buttonText="Go to main page" buttonLink="/" type="success" title="Success"/>)
