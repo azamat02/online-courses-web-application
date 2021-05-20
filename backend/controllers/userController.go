@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 	"online-courses-app/database"
 	"online-courses-app/models"
@@ -53,4 +54,36 @@ func GetUser(c *fiber.Ctx) error {
 
 
 	return c.JSON(jsonUser)
+}
+
+func IsAdmin(c *fiber.Ctx) error {
+	//Get jwt from cookie
+	cookie := c.Cookies("jwt")
+
+	//Unparsing token to get user ID
+	token, err := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(SecretKey), nil
+	})
+
+	if err != nil {
+		//c.Status(fiber.StatusUnauthorized)
+		return c.JSON(fiber.Map{
+			"message": "Unauthenticated",
+		})
+	}
+
+	claims := token.Claims.(*jwt.StandardClaims)
+	id, _ := strconv.Atoi(claims.Issuer)
+
+	if id == 1 {
+		c.Status(fiber.StatusOK)
+		return c.JSON(fiber.Map{
+			"message": "User is admin",
+		})
+	}
+
+	c.Status(fiber.StatusNotFound)
+	return c.JSON(fiber.Map{
+		"message": "User is not admin",
+	})
 }

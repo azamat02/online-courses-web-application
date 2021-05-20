@@ -14,6 +14,7 @@ func Setup(app *fiber.App) {
 	app.Post("api/sign_up", controllers.SignUp)
 	app.Post("api/sign_in", controllers.SignIn)
 	app.Get("api/user", controllers.User)
+	app.Get("api/admin", controllers.IsAdmin)
 	app.Post("api/logout", controllers.Logout)
 
 	//Courses routes
