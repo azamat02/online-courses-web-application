@@ -43,5 +43,6 @@ func Setup(app *fiber.App) {
 	//Purchased courses routes
 	app.Get("api/purchased/", controllers.GetAllPurchasedCourses)
 	app.Get("api/purchased/by_user/:id", controllers.GetAllUserPurchasedCourses)
+	app.Get("api/purchased/has/:id", controllers.CheckIfUserHasPurchasedCourse)
 	app.Post("api/purchased", controllers.CreatePurchasedCourse)
 }

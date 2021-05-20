@@ -784,7 +784,7 @@ false YEKT
 false Z
 false Zulu
 </TimeZones>
-      <StartupTime>1621326012</StartupTime>
+      <StartupTime>1621454471</StartupTime>
     </root>
     <database id="2" parent="1" name="micro_1">
       <ObjectId>24593</ObjectId>
@@ -793,13 +793,14 @@ false Zulu
     <database id="3" parent="1" name="online_courses">
       <ObjectId>24913</ObjectId>
       <Owner>postgres</Owner>
-      <IntrospectionStateNumber>644</IntrospectionStateNumber>
+      <IntrospectionStateNumber>666</IntrospectionStateNumber>
       <Current>1</Current>
       <Relations>sequence|table|24965|24967|1
 sequence|table|25021|25023|1
 sequence|table|24938|24940|1
 sequence|table|25042|25044|1
 sequence|table|24949|24951|1
+sequence|table|25055|25057|1
 sequence|table|25008|25010|1
 </Relations>
     </database>
@@ -884,7 +885,7 @@ UC/10
 </Acl>
       <StateNumber>287</StateNumber>
       <Owner>postgres</Owner>
-      <IntrospectionStateNumber>645</IntrospectionStateNumber>
+      <IntrospectionStateNumber>667</IntrospectionStateNumber>
       <Current>1</Current>
     </schema>
     <extension id="21" parent="3" name="plpgsql">
@@ -1014,43 +1015,54 @@ UC/10
       <StateNumber>602</StateNumber>
       <DataType>bigint|0s</DataType>
     </sequence>
-    <sequence id="38" parent="20" name="users_id_seq">
+    <sequence id="38" parent="20" name="purchased_courses_id_seq">
+      <ObjectId>25055</ObjectId>
+      <Owner>postgres</Owner>
+      <StateNumber>648</StateNumber>
+      <DataType>bigint|0s</DataType>
+    </sequence>
+    <sequence id="39" parent="20" name="users_id_seq">
       <ObjectId>25008</ObjectId>
       <Owner>postgres</Owner>
       <StateNumber>631</StateNumber>
       <DataType>bigint|0s</DataType>
     </sequence>
-    <table id="39" parent="20" name="comments">
+    <table id="40" parent="20" name="comments">
       <ObjectId>25023</ObjectId>
       <Owner>postgres</Owner>
       <StateNumber>634</StateNumber>
     </table>
-    <table id="40" parent="20" name="courses">
+    <table id="41" parent="20" name="courses">
       <ObjectId>24940</ObjectId>
       <Owner>postgres</Owner>
       <StateNumber>602</StateNumber>
     </table>
-    <table id="41" parent="20" name="lessons">
+    <table id="42" parent="20" name="lessons">
       <ObjectId>24967</ObjectId>
       <Owner>postgres</Owner>
       <StateNumber>611</StateNumber>
     </table>
-    <table id="42" parent="20" name="log_of_users">
+    <table id="43" parent="20" name="log_of_users">
       <ObjectId>25044</ObjectId>
       <Owner>postgres</Owner>
       <StateNumber>641</StateNumber>
     </table>
-    <table id="43" parent="20" name="modules">
+    <table id="44" parent="20" name="modules">
       <ObjectId>24951</ObjectId>
       <Owner>postgres</Owner>
       <StateNumber>602</StateNumber>
     </table>
-    <table id="44" parent="20" name="users">
+    <table id="45" parent="20" name="purchased_courses">
+      <ObjectId>25057</ObjectId>
+      <Owner>postgres</Owner>
+      <StateNumber>648</StateNumber>
+    </table>
+    <table id="46" parent="20" name="users">
       <ObjectId>25010</ObjectId>
       <Owner>postgres</Owner>
       <StateNumber>634</StateNumber>
     </table>
-    <column id="45" parent="39" name="id">
+    <column id="47" parent="40" name="id">
       <Position>1</Position>
       <DataType>bigint|0s</DataType>
       <NotNull>1</NotNull>
@@ -1058,37 +1070,37 @@ UC/10
       <DefaultExpression>nextval(&apos;comments_id_seq&apos;::regclass)</DefaultExpression>
       <TypeId>20</TypeId>
     </column>
-    <column id="46" parent="39" name="user_id">
+    <column id="48" parent="40" name="user_id">
       <Position>2</Position>
       <DataType>bigint|0s</DataType>
       <StateNumber>634</StateNumber>
       <TypeId>20</TypeId>
     </column>
-    <column id="47" parent="39" name="course_id">
+    <column id="49" parent="40" name="course_id">
       <Position>3</Position>
       <DataType>bigint|0s</DataType>
       <StateNumber>634</StateNumber>
       <TypeId>20</TypeId>
     </column>
-    <column id="48" parent="39" name="ctext">
+    <column id="50" parent="40" name="ctext">
       <Position>4</Position>
       <DataType>text|0s</DataType>
       <StateNumber>634</StateNumber>
       <TypeId>25</TypeId>
     </column>
-    <column id="49" parent="39" name="rate">
+    <column id="51" parent="40" name="rate">
       <Position>5</Position>
       <DataType>bigint|0s</DataType>
       <StateNumber>634</StateNumber>
       <TypeId>20</TypeId>
     </column>
-    <column id="50" parent="39" name="created_date">
+    <column id="52" parent="40" name="created_date">
       <Position>6</Position>
       <DataType>timestamp with time zone|0s</DataType>
       <StateNumber>634</StateNumber>
       <TypeId>1184</TypeId>
     </column>
-    <index id="51" parent="39" name="comments_pkey">
+    <index id="53" parent="40" name="comments_pkey">
       <ObjectId>25030</ObjectId>
       <StateNumber>634</StateNumber>
       <ColNames>id</ColNames>
@@ -1098,14 +1110,14 @@ UC/10
       <CollationIds>0</CollationIds>
       <ClassIds>3124</ClassIds>
     </index>
-    <key id="52" parent="39" name="comments_pkey">
+    <key id="54" parent="40" name="comments_pkey">
       <ObjectId>25031</ObjectId>
       <StateNumber>634</StateNumber>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
       <UnderlyingIndexName>comments_pkey</UnderlyingIndexName>
     </key>
-    <foreign-key id="53" parent="39" name="fk_comments_user">
+    <foreign-key id="55" parent="40" name="fk_comments_user">
       <ObjectId>25032</ObjectId>
       <StateNumber>634</StateNumber>
       <ColNames>user_id</ColNames>
@@ -1115,7 +1127,7 @@ UC/10
       <RefKeyName>users_pkey</RefKeyName>
       <RefColNames>id</RefColNames>
     </foreign-key>
-    <foreign-key id="54" parent="39" name="fk_comments_course">
+    <foreign-key id="56" parent="40" name="fk_comments_course">
       <ObjectId>25037</ObjectId>
       <StateNumber>634</StateNumber>
       <ColNames>course_id</ColNames>
@@ -1125,7 +1137,7 @@ UC/10
       <RefKeyName>courses_pkey</RefKeyName>
       <RefColNames>id</RefColNames>
     </foreign-key>
-    <column id="55" parent="40" name="id">
+    <column id="57" parent="41" name="id">
       <Position>1</Position>
       <DataType>bigint|0s</DataType>
       <NotNull>1</NotNull>
@@ -1133,43 +1145,43 @@ UC/10
       <DefaultExpression>nextval(&apos;courses_id_seq&apos;::regclass)</DefaultExpression>
       <TypeId>20</TypeId>
     </column>
-    <column id="56" parent="40" name="img">
+    <column id="58" parent="41" name="img">
       <Position>2</Position>
       <DataType>text|0s</DataType>
       <StateNumber>599</StateNumber>
       <TypeId>25</TypeId>
     </column>
-    <column id="57" parent="40" name="title">
+    <column id="59" parent="41" name="title">
       <Position>3</Position>
       <DataType>text|0s</DataType>
       <StateNumber>599</StateNumber>
       <TypeId>25</TypeId>
     </column>
-    <column id="58" parent="40" name="description">
+    <column id="60" parent="41" name="description">
       <Position>4</Position>
       <DataType>text|0s</DataType>
       <StateNumber>599</StateNumber>
       <TypeId>25</TypeId>
     </column>
-    <column id="59" parent="40" name="created_data">
+    <column id="61" parent="41" name="created_data">
       <Position>5</Position>
       <DataType>timestamp with time zone|0s</DataType>
       <StateNumber>599</StateNumber>
       <TypeId>1184</TypeId>
     </column>
-    <column id="60" parent="40" name="req">
+    <column id="62" parent="41" name="req">
       <Position>6</Position>
       <DataType>text|0s</DataType>
       <StateNumber>599</StateNumber>
       <TypeId>25</TypeId>
     </column>
-    <column id="61" parent="40" name="what_you_will_learn">
+    <column id="63" parent="41" name="what_you_will_learn">
       <Position>7</Position>
       <DataType>text|0s</DataType>
       <StateNumber>599</StateNumber>
       <TypeId>25</TypeId>
     </column>
-    <index id="62" parent="40" name="courses_pkey">
+    <index id="64" parent="41" name="courses_pkey">
       <ObjectId>24947</ObjectId>
       <StateNumber>599</StateNumber>
       <ColNames>id</ColNames>
@@ -1179,14 +1191,14 @@ UC/10
       <CollationIds>0</CollationIds>
       <ClassIds>3124</ClassIds>
     </index>
-    <key id="63" parent="40" name="courses_pkey">
+    <key id="65" parent="41" name="courses_pkey">
       <ObjectId>24948</ObjectId>
       <StateNumber>599</StateNumber>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
       <UnderlyingIndexName>courses_pkey</UnderlyingIndexName>
     </key>
-    <column id="64" parent="41" name="id">
+    <column id="66" parent="42" name="id">
       <Position>1</Position>
       <DataType>bigint|0s</DataType>
       <NotNull>1</NotNull>
@@ -1194,37 +1206,37 @@ UC/10
       <DefaultExpression>nextval(&apos;lessons_id_seq&apos;::regclass)</DefaultExpression>
       <TypeId>20</TypeId>
     </column>
-    <column id="65" parent="41" name="type">
+    <column id="67" parent="42" name="type">
       <Position>2</Position>
       <DataType>text|0s</DataType>
       <StateNumber>611</StateNumber>
       <TypeId>25</TypeId>
     </column>
-    <column id="66" parent="41" name="module_id">
+    <column id="68" parent="42" name="module_id">
       <Position>3</Position>
       <DataType>bigint|0s</DataType>
       <StateNumber>611</StateNumber>
       <TypeId>20</TypeId>
     </column>
-    <column id="67" parent="41" name="title">
+    <column id="69" parent="42" name="title">
       <Position>4</Position>
       <DataType>text|0s</DataType>
       <StateNumber>611</StateNumber>
       <TypeId>25</TypeId>
     </column>
-    <column id="68" parent="41" name="link">
+    <column id="70" parent="42" name="link">
       <Position>5</Position>
       <DataType>text|0s</DataType>
       <StateNumber>611</StateNumber>
       <TypeId>25</TypeId>
     </column>
-    <column id="69" parent="41" name="content">
+    <column id="71" parent="42" name="content">
       <Position>6</Position>
       <DataType>text|0s</DataType>
       <StateNumber>611</StateNumber>
       <TypeId>25</TypeId>
     </column>
-    <index id="70" parent="41" name="lessons_pkey">
+    <index id="72" parent="42" name="lessons_pkey">
       <ObjectId>24974</ObjectId>
       <StateNumber>611</StateNumber>
       <ColNames>id</ColNames>
@@ -1234,14 +1246,14 @@ UC/10
       <CollationIds>0</CollationIds>
       <ClassIds>3124</ClassIds>
     </index>
-    <key id="71" parent="41" name="lessons_pkey">
+    <key id="73" parent="42" name="lessons_pkey">
       <ObjectId>24975</ObjectId>
       <StateNumber>611</StateNumber>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
       <UnderlyingIndexName>lessons_pkey</UnderlyingIndexName>
     </key>
-    <foreign-key id="72" parent="41" name="fk_lessons_module">
+    <foreign-key id="74" parent="42" name="fk_lessons_module">
       <ObjectId>24976</ObjectId>
       <StateNumber>611</StateNumber>
       <ColNames>module_id</ColNames>
@@ -1251,7 +1263,7 @@ UC/10
       <RefKeyName>modules_pkey</RefKeyName>
       <RefColNames>id</RefColNames>
     </foreign-key>
-    <column id="73" parent="42" name="id">
+    <column id="75" parent="43" name="id">
       <Position>1</Position>
       <DataType>bigint|0s</DataType>
       <NotNull>1</NotNull>
@@ -1259,19 +1271,19 @@ UC/10
       <DefaultExpression>nextval(&apos;log_of_users_id_seq&apos;::regclass)</DefaultExpression>
       <TypeId>20</TypeId>
     </column>
-    <column id="74" parent="42" name="user_id">
+    <column id="76" parent="43" name="user_id">
       <Position>2</Position>
       <DataType>bigint|0s</DataType>
       <StateNumber>641</StateNumber>
       <TypeId>20</TypeId>
     </column>
-    <column id="75" parent="42" name="enter_date">
+    <column id="77" parent="43" name="enter_date">
       <Position>3</Position>
       <DataType>timestamp with time zone|0s</DataType>
       <StateNumber>641</StateNumber>
       <TypeId>1184</TypeId>
     </column>
-    <index id="76" parent="42" name="log_of_users_pkey">
+    <index id="78" parent="43" name="log_of_users_pkey">
       <ObjectId>25048</ObjectId>
       <StateNumber>641</StateNumber>
       <ColNames>id</ColNames>
@@ -1281,14 +1293,14 @@ UC/10
       <CollationIds>0</CollationIds>
       <ClassIds>3124</ClassIds>
     </index>
-    <key id="77" parent="42" name="log_of_users_pkey">
+    <key id="79" parent="43" name="log_of_users_pkey">
       <ObjectId>25049</ObjectId>
       <StateNumber>641</StateNumber>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
       <UnderlyingIndexName>log_of_users_pkey</UnderlyingIndexName>
     </key>
-    <foreign-key id="78" parent="42" name="fk_log_of_users_user">
+    <foreign-key id="80" parent="43" name="fk_log_of_users_user">
       <ObjectId>25050</ObjectId>
       <StateNumber>641</StateNumber>
       <ColNames>user_id</ColNames>
@@ -1298,7 +1310,7 @@ UC/10
       <RefKeyName>users_pkey</RefKeyName>
       <RefColNames>id</RefColNames>
     </foreign-key>
-    <column id="79" parent="43" name="id">
+    <column id="81" parent="44" name="id">
       <Position>1</Position>
       <DataType>bigint|0s</DataType>
       <NotNull>1</NotNull>
@@ -1306,25 +1318,25 @@ UC/10
       <DefaultExpression>nextval(&apos;modules_id_seq&apos;::regclass)</DefaultExpression>
       <TypeId>20</TypeId>
     </column>
-    <column id="80" parent="43" name="title">
+    <column id="82" parent="44" name="title">
       <Position>2</Position>
       <DataType>text|0s</DataType>
       <StateNumber>602</StateNumber>
       <TypeId>25</TypeId>
     </column>
-    <column id="81" parent="43" name="course_id">
+    <column id="83" parent="44" name="course_id">
       <Position>3</Position>
       <DataType>bigint|0s</DataType>
       <StateNumber>602</StateNumber>
       <TypeId>20</TypeId>
     </column>
-    <column id="82" parent="43" name="number_of_lessons">
+    <column id="84" parent="44" name="number_of_lessons">
       <Position>4</Position>
       <DataType>bigint|0s</DataType>
       <StateNumber>602</StateNumber>
       <TypeId>20</TypeId>
     </column>
-    <index id="83" parent="43" name="modules_pkey">
+    <index id="85" parent="44" name="modules_pkey">
       <ObjectId>24958</ObjectId>
       <StateNumber>602</StateNumber>
       <ColNames>id</ColNames>
@@ -1334,14 +1346,14 @@ UC/10
       <CollationIds>0</CollationIds>
       <ClassIds>3124</ClassIds>
     </index>
-    <key id="84" parent="43" name="modules_pkey">
+    <key id="86" parent="44" name="modules_pkey">
       <ObjectId>24959</ObjectId>
       <StateNumber>602</StateNumber>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
       <UnderlyingIndexName>modules_pkey</UnderlyingIndexName>
     </key>
-    <foreign-key id="85" parent="43" name="fk_modules_course">
+    <foreign-key id="87" parent="44" name="fk_modules_course">
       <ObjectId>24960</ObjectId>
       <StateNumber>602</StateNumber>
       <ColNames>course_id</ColNames>
@@ -1351,7 +1363,70 @@ UC/10
       <RefKeyName>courses_pkey</RefKeyName>
       <RefColNames>id</RefColNames>
     </foreign-key>
-    <column id="86" parent="44" name="id">
+    <column id="88" parent="45" name="id">
+      <Position>1</Position>
+      <DataType>bigint|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>648</StateNumber>
+      <DefaultExpression>nextval(&apos;purchased_courses_id_seq&apos;::regclass)</DefaultExpression>
+      <TypeId>20</TypeId>
+    </column>
+    <column id="89" parent="45" name="user_id">
+      <Position>2</Position>
+      <DataType>bigint|0s</DataType>
+      <StateNumber>648</StateNumber>
+      <TypeId>20</TypeId>
+    </column>
+    <column id="90" parent="45" name="course_id">
+      <Position>3</Position>
+      <DataType>bigint|0s</DataType>
+      <StateNumber>648</StateNumber>
+      <TypeId>20</TypeId>
+    </column>
+    <column id="91" parent="45" name="purchased_date">
+      <Position>4</Position>
+      <DataType>timestamp with time zone|0s</DataType>
+      <StateNumber>648</StateNumber>
+      <TypeId>1184</TypeId>
+    </column>
+    <index id="92" parent="45" name="purchased_courses_pkey">
+      <ObjectId>25061</ObjectId>
+      <StateNumber>648</StateNumber>
+      <ColNames>id</ColNames>
+      <Unique>1</Unique>
+      <Primary>1</Primary>
+      <AccessMethodId>403</AccessMethodId>
+      <CollationIds>0</CollationIds>
+      <ClassIds>3124</ClassIds>
+    </index>
+    <key id="93" parent="45" name="purchased_courses_pkey">
+      <ObjectId>25062</ObjectId>
+      <StateNumber>648</StateNumber>
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>purchased_courses_pkey</UnderlyingIndexName>
+    </key>
+    <foreign-key id="94" parent="45" name="fk_purchased_courses_user">
+      <ObjectId>25063</ObjectId>
+      <StateNumber>648</StateNumber>
+      <ColNames>user_id</ColNames>
+      <RefTableId>25010</RefTableId>
+      <RefColPositions>1</RefColPositions>
+      <RefTableName>users</RefTableName>
+      <RefKeyName>users_pkey</RefKeyName>
+      <RefColNames>id</RefColNames>
+    </foreign-key>
+    <foreign-key id="95" parent="45" name="fk_purchased_courses_course">
+      <ObjectId>25068</ObjectId>
+      <StateNumber>648</StateNumber>
+      <ColNames>course_id</ColNames>
+      <RefTableId>24940</RefTableId>
+      <RefColPositions>1</RefColPositions>
+      <RefTableName>courses</RefTableName>
+      <RefKeyName>courses_pkey</RefKeyName>
+      <RefColNames>id</RefColNames>
+    </foreign-key>
+    <column id="96" parent="46" name="id">
       <Position>1</Position>
       <DataType>bigint|0s</DataType>
       <NotNull>1</NotNull>
@@ -1359,37 +1434,37 @@ UC/10
       <DefaultExpression>nextval(&apos;users_id_seq&apos;::regclass)</DefaultExpression>
       <TypeId>20</TypeId>
     </column>
-    <column id="87" parent="44" name="login">
+    <column id="97" parent="46" name="login">
       <Position>2</Position>
       <DataType>text|0s</DataType>
       <StateNumber>631</StateNumber>
       <TypeId>25</TypeId>
     </column>
-    <column id="88" parent="44" name="password">
+    <column id="98" parent="46" name="password">
       <Position>3</Position>
       <DataType>bytea|0s</DataType>
       <StateNumber>631</StateNumber>
       <TypeId>17</TypeId>
     </column>
-    <column id="89" parent="44" name="name">
+    <column id="99" parent="46" name="name">
       <Position>4</Position>
       <DataType>text|0s</DataType>
       <StateNumber>631</StateNumber>
       <TypeId>25</TypeId>
     </column>
-    <column id="90" parent="44" name="surname">
+    <column id="100" parent="46" name="surname">
       <Position>5</Position>
       <DataType>text|0s</DataType>
       <StateNumber>631</StateNumber>
       <TypeId>25</TypeId>
     </column>
-    <column id="91" parent="44" name="email">
+    <column id="101" parent="46" name="email">
       <Position>6</Position>
       <DataType>text|0s</DataType>
       <StateNumber>631</StateNumber>
       <TypeId>25</TypeId>
     </column>
-    <index id="92" parent="44" name="users_pkey">
+    <index id="102" parent="46" name="users_pkey">
       <ObjectId>25017</ObjectId>
       <StateNumber>631</StateNumber>
       <ColNames>id</ColNames>
@@ -1399,7 +1474,7 @@ UC/10
       <CollationIds>0</CollationIds>
       <ClassIds>3124</ClassIds>
     </index>
-    <index id="93" parent="44" name="users_email_key">
+    <index id="103" parent="46" name="users_email_key">
       <ObjectId>25019</ObjectId>
       <StateNumber>631</StateNumber>
       <ColNames>email</ColNames>
@@ -1409,14 +1484,14 @@ UC/10
       <CollationNames>default</CollationNames>
       <ClassIds>3126</ClassIds>
     </index>
-    <key id="94" parent="44" name="users_pkey">
+    <key id="104" parent="46" name="users_pkey">
       <ObjectId>25018</ObjectId>
       <StateNumber>631</StateNumber>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
       <UnderlyingIndexName>users_pkey</UnderlyingIndexName>
     </key>
-    <key id="95" parent="44" name="users_email_key">
+    <key id="105" parent="46" name="users_email_key">
       <ObjectId>25020</ObjectId>
       <StateNumber>631</StateNumber>
       <ColNames>email</ColNames>

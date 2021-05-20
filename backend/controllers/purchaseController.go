@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 	"online-courses-app/database"
 	"online-courses-app/models"
@@ -77,4 +78,40 @@ func CreatePurchasedCourse (c *fiber.Ctx) error {
 
 	//Return course
 	return c.JSON(purchased_course)
+}
+
+func CheckIfUserHasPurchasedCourse (c *fiber.Ctx) error {
+	courseId := c.Params("id")
+
+	//Get jwt from cookie
+	cookie := c.Cookies("jwt")
+
+	//Unparsing token to get user ID
+	token, err := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(SecretKey), nil
+	})
+
+	if err != nil {
+		//c.Status(fiber.StatusUnauthorized)
+		return c.JSON(fiber.Map{
+			"message": "Unauthenticated",
+		})
+	}
+
+	claims := token.Claims.(*jwt.StandardClaims)
+
+	userId, _ := strconv.Atoi(claims.Issuer)
+	purchasedCourse := models.PurchasedCourses{}
+
+	database.DB.Where("user_id = ?", userId).Where("course_id = ?", courseId).First(&purchasedCourse)
+
+	if purchasedCourse.Id >0 {
+		c.Status(fiber.StatusOK)
+		return c.JSON(fiber.Map{
+			"message": "User purchased course",
+		})
+	}
+	return c.JSON(fiber.Map{
+		"message": "User not purchased course",
+	})
 }
