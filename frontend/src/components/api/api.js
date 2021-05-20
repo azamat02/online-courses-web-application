@@ -41,7 +41,7 @@ export default class CoursesApi{
         if (res == null) {
             return []
         }
-        return res.map(this._transformModule);
+        return res.map(this._transformLesson);
     }
 
     getAllCourses = async () => {
@@ -118,6 +118,17 @@ export default class CoursesApi{
     getLesson = async (id) => {
         const res = await this.getResource(`/lessons/${id}`);
         return this._transformLesson(res);
+    }
+
+    checkIfPurchasedCourse = async (id) => {
+        let res = await fetch(`http://localhost:8000/api/purchased/has/${id}`, {
+            headers: {'Content-type': 'application/json'},
+            credentials: 'include'
+        })
+
+        let json = await res.json()
+
+        return json
     }
 
     isSet(data) {

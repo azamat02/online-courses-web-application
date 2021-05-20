@@ -36,7 +36,7 @@ export default function Navbar(props){
                                 <Menu.Button className="focus:outline-none inline-flex justify-center w-full">
                                     <button className="hover:bg-blue-600 focus:ring-2 transition flex items-center text-white relative focus:outline-none px-5 py-2 bg-blue-500 rounded-lg">
                                                         <span className="text-md mr-1 font-bold">
-                                                            Azamat
+                                                            {userData.name}
                                                         </span>
                                         <UserCircleIcon className="inline w-7 h-7"/>
                                     </button>

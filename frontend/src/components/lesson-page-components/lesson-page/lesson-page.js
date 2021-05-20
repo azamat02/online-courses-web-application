@@ -18,14 +18,23 @@ export default function LessonPage(props){
     const [id, setId] = useState(props.id)
     const [lesson, setLesson] = useState(null)
     const [modules, setModules] = useState(null)
+    const [purchased, setPurchased] = useState(null)
 
     let api = new CoursesApi()
 
     useEffect(()=>{
-        if (modules == null && lesson == null){
-            // Getting lesson and modules
+        if (modules == null && lesson == null && purchased == null){
+            // Getting lesson and modules and if purchased course
             api.getLesson(id).then((data)=>{
                 api.getModule(data.lessonModuleId).then(data=>{
+                    // Check purchase
+                    api.checkIfPurchasedCourse(data.moduleCourseId).then(data=>{
+                        if (data.message !== "User purchased course") {
+                            setPurchased(false)
+                        } else {
+                            setPurchased(true)
+                        }
+                    })
                     api.getModulesByCourseId(data.moduleCourseId).then(data=>{
                         setModules(data)
                     })
@@ -33,14 +42,18 @@ export default function LessonPage(props){
                 setLesson(data)
             })
         }
-    }, [modules, lesson])
+    }, [modules, lesson, purchased])
+
+    if (!lesson || !modules || userData == null || purchased === null) {
+        return <Spinner/>
+    }
 
     if (!isAuthorized) {
         return <Modal type="error" info="You are not authorized. Please sign in/up first" buttonLink={`/signin`} buttonText="Sign in" title="Error" open={true}/>
     }
 
-    if (!lesson || !modules || userData == null) {
-        return <Spinner/>
+    if (!purchased) {
+        return <Modal type="error" info="You are not purchased this course. Please purchase first!" buttonLink={`/`} buttonText="Go to main" title="Error" open={true}/>
     }
 
     let {lessonId,

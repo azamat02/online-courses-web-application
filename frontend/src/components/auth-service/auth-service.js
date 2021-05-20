@@ -56,4 +56,15 @@ export default class AuthService extends Component{
             credentials: 'include'
         })
     }
+
+    IsAdmin = async () => {
+        let res = await fetch("http://localhost:8000/api/admin", {
+            headers: {'Content-type': 'application/json'},
+            credentials: 'include'
+        })
+
+        let json = await res.json()
+
+        return json
+    }
 }
