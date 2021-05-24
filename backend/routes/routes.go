@@ -59,6 +59,7 @@ func Setup(app *fiber.App) {
 	app.Post("api/admin/delete_module", controllers.DeleteModuleById)
 	app.Post("api/admin/update_module", controllers.UpdateModuleById)
 
-
-
+	app.Post("api/admin/create_lesson", controllers.CreateLesson)
+	app.Post("api/admin/delete_lesson", controllers.DeleteLessonById)
+	app.Post("api/admin/update_lesson", controllers.UpdateLessonById)
 }
