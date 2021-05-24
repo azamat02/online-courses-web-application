@@ -24,23 +24,30 @@ import CoursesApi from "../../api";
 import Spinner from "../../main-page-components/spinner";
 import AuthService from "../../auth-service";
 import {AppContext} from "../../../stateManager";
+import AdminApi from "../../admin-api";
+import Modal from "../../tools/modal";
 
 
 export default function AdminPanel() {
     const { appState } = useContext(AppContext)
     const {isAuthorized, userData} = appState
     const [show, setShow] = useState(false)
+    const [modal, setModal] = useState(null)
     const [tab, setTab] = useState('stats')
     const [activeTab, setActiveTab] = useState(0)
     const [activeAction, setActiveAction] = useState(null)
 
     let api = new CoursesApi()
     let authService = new AuthService()
+
+    // Tables with info
     const [users, setUsers] = useState(null);
     const [courses, setCourses] = useState(null);
     const [modules, setModules] = useState(null);
     const [lessons, setLessons] = useState(null);
     const [isAdmin, setIsAdmin] = useState(null)
+
+    const adminApi = new AdminApi()
 
     useEffect(()=>{
         if (users === null && courses === null && modules === null && lessons === null) {
@@ -83,12 +90,13 @@ export default function AdminPanel() {
             return <Redirect to="*"/>
         }
     }
-
+    if (!users || !modules || !courses || !lessons) {
+        return <Spinner/>
+    }
 
     let toggleShow = () => {
         setShow(!show);
     }
-
     let openForm = (type) => {
         if (type === 'add') {
             setActiveAction('add');
@@ -99,10 +107,6 @@ export default function AdminPanel() {
         if (type === 'update') {
             setActiveAction('update');
         }
-    }
-
-    if (!users || !modules || !courses || !lessons) {
-        return <Spinner/>
     }
 
     let usersTableItems = users.map(elem=>{
@@ -152,14 +156,201 @@ export default function AdminPanel() {
         )
     })
 
-    function submitUser(type, data) {
+    async function submitUser(type, e) {
+        e.preventDefault()
         if (type === 'add'){
+            let inputs = e.target.querySelectorAll("input")
+            let inputValues = []
+            inputs.forEach(elem=>{
+                inputValues.push(elem.value)
+            })
+            let userName = inputValues[0]
+            let userSurname = inputValues[1]
+            let userEmail = inputValues[2]
+            let userLogin = inputValues[3]
+            let userPass = inputValues[4]
 
+            let status
+            try {
+                status = await adminApi.createUser({name: userName, surname: userSurname, login: userLogin, email: userEmail, password: userPass})
+            } catch (err) {
+                setModal(<Modal href={true} open={true} title="Error" info="Entered email exists, try another one!" type="error" buttonLink="/admin" buttonText="Reload page"/>)
+            }
+            if (status) {
+                setModal(<Modal href={true} open={true} title="Success" info="User created successfully!" type="success" buttonLink="/admin" buttonText="Reload page"/>)
+            }
+        }
+        if (type === 'delete'){
+            let inputs = e.target.querySelectorAll("input")
+            let inputValues = []
+            inputs.forEach(elem=>{
+                inputValues.push(elem.value)
+            })
+            let userId = inputValues[0]
+            let user = {id: userId}
+
+            await adminApi.deleteUser(user)
+
+            setModal(<Modal href={true} open={true} title="Success" info={`User with ID:${userId} deleted successfully!`} type="success" buttonLink="/admin" buttonText="Reload page"/>)
+        }
+        if (type === 'update'){
+            let inputs = e.target.querySelectorAll("input")
+            let inputValues = []
+            inputs.forEach(elem=>{
+                inputValues.push(elem.value)
+            })
+            let userId = inputValues[0]
+            let userName = inputValues[1]
+            let userSurname = inputValues[2]
+            let userEmail = inputValues[3]
+            let userLogin = inputValues[4]
+            let userPass = inputValues[5]
+            let user = {id: userId, name:userName, surname: userSurname, login: userLogin, email:userEmail, password: userPass}
+
+            let status
+            try {
+                status = await adminApi.updateUser(user)
+            } catch (err) {
+                setModal(<Modal href={true} open={true} title="Error" info="Something goes wrong, try later!" type="error" buttonLink="/admin" buttonText="Reload page"/>)
+            }
+            if (status) {
+                setModal(<Modal href={true} open={true} title="Success" info="User updated successfully!" type="success" buttonLink="/admin" buttonText="Reload page"/>)
+            }
         }
     }
 
-    function submitCourse() {
-        return undefined;
+    async function submitCourse(type, e) {
+        e.preventDefault()
+        if (type === 'add'){
+            let inputs = e.target.querySelectorAll("input")
+            let textareas = e.target.querySelectorAll("textarea")
+            let inputValues = []
+            let textareaValues = []
+            inputs.forEach(elem=>{
+                inputValues.push(elem.value)
+            })
+            textareas.forEach(elem=>{
+                textareaValues.push(elem.value)
+            })
+            let courseImageLink = inputValues[0]
+            let courseTitle = inputValues[1]
+            let courseDesc = textareaValues[0]
+            let courseReqs = textareaValues[1]
+            let courseAdvs = textareaValues[2]
+            let course = {img: courseImageLink, title: courseTitle, desc: courseDesc, req: courseReqs, what_you_will_learn: courseAdvs}
+
+            let status
+            try {
+                status = await adminApi.createCourse(course)
+            } catch (err) {
+                setModal(<Modal href={true} open={true} title="Error" info="Something goes wrong, try later!" type="error" buttonLink="/admin" buttonText="Reload page"/>)
+            }
+            if (status) {
+                setModal(<Modal href={true} open={true} title="Success" info="Course created successfully!" type="success" buttonLink="/admin" buttonText="Reload page"/>)
+            }
+        }
+        if (type === 'delete'){
+            let inputs = e.target.querySelectorAll("input")
+            let inputValues = []
+            inputs.forEach(elem=>{
+                inputValues.push(elem.value)
+            })
+            let courseId = inputValues[0]
+            let course = {id: courseId}
+
+            await adminApi.deleteCourse(course)
+
+            setModal(<Modal href={true} open={true} title="Success" info={`Course with ID:${courseId} deleted successfully!`} type="success" buttonLink="/admin" buttonText="Reload page"/>)
+        }
+        if (type === 'update'){
+            let inputs = e.target.querySelectorAll("input")
+            let textareas = e.target.querySelectorAll("textarea")
+            let inputValues = []
+            let textareaValues = []
+            inputs.forEach(elem=>{
+                inputValues.push(elem.value)
+            })
+            textareas.forEach(elem=>{
+                textareaValues.push(elem.value)
+            })
+            let courseId = inputValues[0]
+            let courseImageLink = inputValues[1]
+            let courseTitle = inputValues[2]
+            let courseDesc = textareaValues[0]
+            let courseReqs = textareaValues[1]
+            let courseAdvs = textareaValues[2]
+            let course = {id: courseId, img: courseImageLink, title: courseTitle, desc: courseDesc, req: courseReqs, what_you_will_learn: courseAdvs}
+
+            let status
+            try {
+                status = await adminApi.updateCourse(course)
+            } catch (err) {
+                setModal(<Modal href={true} open={true} title="Error" info="Something goes wrong, try later!" type="error" buttonLink="/admin" buttonText="Reload page"/>)
+            }
+            if (status) {
+                setModal(<Modal href={true} open={true} title="Success" info="Course updated successfully!" type="success" buttonLink="/admin" buttonText="Reload page"/>)
+            }
+        }
+    }
+
+    async function submitModule(type, e) {
+        e.preventDefault()
+        if (type === 'add'){
+            let inputs = e.target.querySelectorAll("input")
+            let inputValues = []
+            inputs.forEach(elem=>{
+                inputValues.push(elem.value)
+            })
+            let moduleTitle = inputValues[0]
+            let moduleCourseId = inputValues[1]
+            let moduleNumberOfLessons= inputValues[2]
+            let module = {c_id: moduleCourseId, number_of_lessons: moduleNumberOfLessons, title: moduleTitle}
+
+            let status
+            try {
+                status = await adminApi.createModule(module)
+            } catch (err) {
+                setModal(<Modal href={true} open={true} title="Error" info="Something goes wrong, try later!" type="error" buttonLink="/admin" buttonText="Reload page"/>)
+            }
+            if (status) {
+                setModal(<Modal href={true} open={true} title="Success" info="Module created successfully!" type="success" buttonLink="/admin" buttonText="Reload page"/>)
+            }
+        }
+        if (type === 'delete'){
+            let inputs = e.target.querySelectorAll("input")
+            let inputValues = []
+            inputs.forEach(elem=>{
+                inputValues.push(elem.value)
+            })
+            let moduleId = inputValues[0]
+            let module = {id: moduleId}
+
+            await adminApi.deleteModule(module)
+
+            setModal(<Modal href={true} open={true} title="Success" info={`Module with ID:${moduleId} deleted successfully!`} type="success" buttonLink="/admin" buttonText="Reload page"/>)
+        }
+        if (type === 'update'){
+            let inputs = e.target.querySelectorAll("input")
+            let inputValues = []
+            inputs.forEach(elem=>{
+                inputValues.push(elem.value)
+            })
+            let moduleId = inputValues[0]
+            let moduleTitle = inputValues[1]
+            let moduleCourseId = inputValues[2]
+            let moduleNumberOfLessons= inputValues[3]
+            let module = {id: moduleId,c_id: moduleCourseId, number_of_lessons: moduleNumberOfLessons, title: moduleTitle}
+
+            let status
+            try {
+                status = await adminApi.updateModule(module)
+            } catch (err) {
+                setModal(<Modal href={true} open={true} title="Error" info="Something goes wrong, try later!" type="error" buttonLink="/admin" buttonText="Reload page"/>)
+            }
+            if (status) {
+                setModal(<Modal href={true} open={true} title="Success" info="Module updated successfully!" type="success" buttonLink="/admin" buttonText="Reload page"/>)
+            }
+        }
     }
 
     return (
@@ -261,6 +452,8 @@ export default function AdminPanel() {
             </section>
             {/*Main page*/}
             <div className="pl-72 pt-10">
+                {modal}
+                {/*Stats section*/}
                 <div className={`${tab === 'stats' ? `` : `hidden`} stats`}>
                     <h1 className="text-3xl text-gray-900 font-bold ">Statistics</h1>
                     <div className="w-5/6">
@@ -307,6 +500,7 @@ export default function AdminPanel() {
                         </div>
                     </div>
                 </div>
+                {/*Tables section*/}
                 <div className={`${tab === 'tables' ? `` : `hidden`} tables`}>
                     <h1 className="text-3xl text-gray-900 font-bold flex items-center">
                         Tables
@@ -345,8 +539,9 @@ export default function AdminPanel() {
                             </div>
                         </div>
                     </div>
-                    {/*Forms*/}
+                    {/*Forms and tables*/}
                     <div className="mt-10 mb-24">
+                        {/*Users*/}
                         <div className={`${activeTab === 0 ? `` : `hidden`}`}>
                             <h1 className="text-xl text-gray-900 font-bold">User table</h1>
                             <table className="rounded-t-lg mt-3 w-5/6 shadow-lg bg-gray-200 text-gray-800">
@@ -375,7 +570,7 @@ export default function AdminPanel() {
                                 </button>
                             </div>
                             <div className={`${activeAction === 'add' ? ` ` : ` hidden `} mt-10 add-user-form`}>
-                                <form onSubmit={()=>submitUser()}>
+                                <form onSubmit={(e)=>submitUser('add', e)}>
                                     <div className="flex items-start">
                                         <div className="mr-2">
                                             <label htmlFor="price"
@@ -411,7 +606,7 @@ export default function AdminPanel() {
                                 </form>
                             </div>
                             <div className={`${activeAction === 'delete' ? ` ` : ` hidden `} mt-10 add-user-form`}>
-                                <form onSubmit={()=>submitUser()}>
+                                <form onSubmit={(e)=>submitUser('delete',e)}>
                                     <div className="mr-10 text-lg font-bold">
                                         <h1>Enter user id you want delete.</h1>
                                     </div>
@@ -428,7 +623,7 @@ export default function AdminPanel() {
                                 </form>
                             </div>
                             <div className={`${activeAction === 'update' ? ` ` : ` hidden `} mt-10 add-user-form`}>
-                                <form onSubmit={()=>submitUser()}>
+                                <form onSubmit={(e)=>submitUser('update', e)}>
                                     <div className="flex items-start">
                                         <div className="mr-2">
                                             <label htmlFor="price"
@@ -469,6 +664,7 @@ export default function AdminPanel() {
                                 </form>
                             </div>
                         </div>
+                        {/*Courses*/}
                         <div className={`${activeTab === 1 ? `` : `hidden`}`}>
                             <h1 className="text-xl text-gray-900 font-bold">Courses table</h1>
                             <table className="rounded-t-lg mt-3 mr-24 shadow-lg bg-gray-200 text-gray-800">
@@ -498,13 +694,8 @@ export default function AdminPanel() {
                                 </button>
                             </div>
                             <div className={`${activeAction === 'add' ? ` ` : ` hidden `} mt-10 add-user-form`}>
-                                <form onSubmit={()=>submitCourse()}>
+                                <form onSubmit={(e)=>submitCourse('add', e)}>
                                     <div className="flex items-start">
-                                        <div className="mr-2">
-                                            <label htmlFor="price"
-                                                   className="block font-medium text-gray-700 mb-2">Lessons</label>
-                                            <input type="text" className="focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 border-gray-500 rounded-lg px-6 py-3" placeholder="Enter"/>
-                                        </div>
                                         <div className="mr-2">
                                             <label htmlFor="price"
                                                    className="block font-medium text-gray-700 mb-2">Image link</label>
@@ -539,7 +730,7 @@ export default function AdminPanel() {
                                 </form>
                             </div>
                             <div className={`${activeAction === 'delete' ? ` ` : ` hidden `} mt-10 add-user-form`}>
-                                <form onSubmit={()=>submitUser()}>
+                                <form onSubmit={(e)=>submitCourse('delete', e)}>
                                     <div className="mr-10 text-lg font-bold">
                                         <h1>Enter course id you want delete.</h1>
                                     </div>
@@ -549,24 +740,19 @@ export default function AdminPanel() {
                                         </div>
                                         <div className="ml-5">
                                             <button className="hover:bg-red-600 focus:outline-none focus:ring-2 transition font-bold flex items-center mr-3 bg-red-500 text-white px-8 py-3 rounded-lg">
-                                                Delete user
+                                                Delete course
                                             </button>
                                         </div>
                                     </div>
                                 </form>
                             </div>
                             <div className={`${activeAction === 'update' ? ` ` : ` hidden `} mt-10 add-user-form`}>
-                                <form onSubmit={()=>submitCourse()}>
+                                <form onSubmit={(e)=>submitCourse('update', e)}>
                                     <div className="flex items-start">
                                         <div className="mr-2">
                                             <label htmlFor="price"
                                                    className="block font-medium text-gray-700 mb-2">ID</label>
                                             <input type="number" className="focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 border-gray-500 rounded-lg px-6 py-3" placeholder="Enter"/>
-                                        </div>
-                                        <div className="mr-2">
-                                            <label htmlFor="price"
-                                                   className="block font-medium text-gray-700 mb-2">Lessons</label>
-                                            <input type="text" className="focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 border-gray-500 rounded-lg px-6 py-3" placeholder="Enter"/>
                                         </div>
                                         <div className="mr-2">
                                             <label htmlFor="price"
@@ -602,6 +788,7 @@ export default function AdminPanel() {
                                 </form>
                             </div>
                         </div>
+                        {/*Modules*/}
                         <div className={`${activeTab === 2 ? `` : `hidden`}`}>
                             <h1 className="text-xl text-gray-900 font-bold">Modules table</h1>
                             <table className="rounded-t-lg mt-3 w-5/6 shadow-lg bg-gray-200 text-gray-800">
@@ -628,7 +815,7 @@ export default function AdminPanel() {
                                 </button>
                             </div>
                             <div className={`${activeAction === 'add' ? ` ` : ` hidden `} mt-10 add-user-form`}>
-                                <form onSubmit={()=>submitCourse()}>
+                                <form onSubmit={(e)=>submitModule('add', e)}>
                                     <div className="flex items-start">
                                         <div className="mr-2">
                                             <label htmlFor="price"
@@ -652,7 +839,7 @@ export default function AdminPanel() {
                                 </form>
                             </div>
                             <div className={`${activeAction === 'delete' ? ` ` : ` hidden `} mt-10 add-user-form`}>
-                                <form onSubmit={()=>submitUser()}>
+                                <form onSubmit={(e)=>submitModule('delete', e)}>
                                     <div className="mr-10 text-lg font-bold">
                                         <h1>Enter module id you want delete.</h1>
                                     </div>
@@ -669,7 +856,7 @@ export default function AdminPanel() {
                                 </form>
                             </div>
                             <div className={`${activeAction === 'update' ? ` ` : ` hidden `} mt-10 add-user-form`}>
-                                <form onSubmit={()=>submitCourse()}>
+                                <form onSubmit={(e)=>submitModule('update', e)}>
                                     <div className="flex items-start">
                                         <div className="mr-2">
                                             <label htmlFor="price"
@@ -698,6 +885,7 @@ export default function AdminPanel() {
                                 </form>
                             </div>
                         </div>
+                        {/*Lessons*/}
                         <div className={`${activeTab === 3 ? `` : `hidden`}`}>
                             <h1 className="text-xl text-gray-900 font-bold">Lessons table</h1>
                             <table className="rounded-t-lg mt-3 mr-10 shadow-lg bg-gray-200 text-gray-800">
@@ -821,7 +1009,6 @@ export default function AdminPanel() {
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
             {/*Sidebar*/}

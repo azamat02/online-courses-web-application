@@ -21,7 +21,7 @@ import {CheckCircleIcon, ExclamationCircleIcon, InformationCircleIcon} from "@he
 
 export default function Modal(props) {
 
-    let {type, open, title, info, buttonText, buttonLink} = props
+    let {type, href, open, title, info, buttonText, buttonLink} = props
     let [isOpen, setIsOpen] = useState(open)
 
     function closeModal() {
@@ -89,7 +89,7 @@ export default function Modal(props) {
                                 </div>
 
                                 <div className="mt-5 flex justify-end focus:outline-none">
-                                    <Link to={buttonLink ? buttonLink : '/'}>
+                                    {href ? <a href={buttonLink ? buttonLink : '/'}>
                                         <button
                                             type="button"
                                             className={`${type === 'info' ? `bg-blue-500 hover:bg-blue-700 focus-visible:ring-blue-500`: ``}
@@ -99,7 +99,17 @@ export default function Modal(props) {
                                         >
                                             {buttonText ? buttonText : 'OK'}
                                         </button>
-                                    </Link>
+                                    </a> : <Link to={buttonLink ? buttonLink : '/'}>
+                                        <button
+                                            type="button"
+                                            className={`${type === 'info' ? `bg-blue-500 hover:bg-blue-700 focus-visible:ring-blue-500`: ``}
+                                                        ${type === 'success' ? `bg-green-500 hover:bg-green-700 focus-visible:ring-green-500`: ``}
+                                                        ${type === 'error' ? `bg-red-500 hover:bg-red-700 focus-visible:ring-red-500`: ``} focus:outline-none focus:ring-2 inline-flex justify-center px-4 py-2 text-sm font-medium text-white border border-transparent rounded-md transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2`}
+                                            onClick={closeModal}
+                                        >
+                                            {buttonText ? buttonText : 'OK'}
+                                        </button>
+                                    </Link>}
                                 </div>
                             </div>
                         </Transition.Child>
