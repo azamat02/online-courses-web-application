@@ -88,3 +88,60 @@ func CreateCourse(c *fiber.Ctx) error {
 	return c.JSON(course)
 }
 
+func DeleteCourseById(c *fiber.Ctx) error {
+	//Get data of user
+	var data map[string]string
+
+	err := c.BodyParser(&data)
+
+	if err != nil {
+		return err
+	}
+
+	id := data["id"]
+
+	modules := []models.Module{}
+
+	//Finding and deleting all lessons and modules of course, and also purchases, comments
+	database.DB.Where("course_id", id).Find(&modules)
+	for _, module := range modules {
+		moduleId := module.Id
+		database.DB.Where("module_id", moduleId).Delete(&models.Lesson{})
+	}
+	database.DB.Where("course_id", id).Delete(&models.Module{})
+	database.DB.Where("course_id", id).Delete(&models.PurchasedCourses{})
+	database.DB.Where("course_id", id).Delete(&models.Comment{})
+	database.DB.Delete(&models.Course{}, id)
+
+	c.Status(fiber.StatusOK)
+	return c.JSON(fiber.Map{
+		"message": "Course with ID:"+id+" deleted",
+	})
+}
+
+func UpdateCourseById(c *fiber.Ctx) error {
+	//Get data of user
+	var data map[string]string
+
+	err := c.BodyParser(&data)
+
+	if err != nil {
+		return err
+	}
+
+	course := models.Course{}
+	database.DB.Where("id = ?", data["id"]).First(&course)
+
+	course.Img = data["img"]
+	course.Title = data["title"]
+	course.Description = data["desc"]
+	course.Req = data["req"]
+	course.What_you_will_learn = data["what_you_will_learn"]
+
+	database.DB.Save(&course)
+
+	c.Status(fiber.StatusOK)
+	return c.JSON(fiber.Map{
+		"message": "Course with ID:"+data["id"]+" updated!",
+	})
+}

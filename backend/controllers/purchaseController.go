@@ -111,6 +111,7 @@ func CheckIfUserHasPurchasedCourse (c *fiber.Ctx) error {
 			"message": "User purchased course",
 		})
 	}
+
 	return c.JSON(fiber.Map{
 		"message": "User not purchased course",
 	})

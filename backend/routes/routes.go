@@ -45,4 +45,20 @@ func Setup(app *fiber.App) {
 	app.Get("api/purchased/by_user/:id", controllers.GetAllUserPurchasedCourses)
 	app.Get("api/purchased/has/:id", controllers.CheckIfUserHasPurchasedCourse)
 	app.Post("api/purchased", controllers.CreatePurchasedCourse)
+
+	//Admin routes
+	app.Post("api/admin/create_user", controllers.SignUp)
+	app.Post("api/admin/delete_user", controllers.DeleteUserById)
+	app.Post("api/admin/update_user", controllers.UpdateUserById)
+
+	app.Post("api/admin/create_course", controllers.CreateCourse)
+	app.Post("api/admin/delete_course", controllers.DeleteCourseById)
+	app.Post("api/admin/update_course", controllers.UpdateCourseById)
+
+	app.Post("api/admin/create_module", controllers.CreateModule)
+	app.Post("api/admin/delete_module", controllers.DeleteModuleById)
+	app.Post("api/admin/update_module", controllers.UpdateModuleById)
+
+
+
 }

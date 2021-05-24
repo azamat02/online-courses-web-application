@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"golang.org/x/crypto/bcrypt"
 	"online-courses-app/database"
 	"online-courses-app/models"
 	"strconv"
@@ -53,4 +54,56 @@ func GetUser(c *fiber.Ctx) error {
 
 
 	return c.JSON(jsonUser)
+}
+
+func DeleteUserById(c *fiber.Ctx) error {
+	//Get data of user
+	var data map[string]string
+
+	err := c.BodyParser(&data)
+
+	if err != nil {
+		return err
+	}
+
+	id := data["id"]
+
+
+	database.DB.Where("user_id", id).Delete(&models.LogOfUser{})
+	database.DB.Delete(&models.User{}, id)
+
+	c.Status(fiber.StatusOK)
+	return c.JSON(fiber.Map{
+		"message": "User with ID:"+id+" deleted",
+	})
+}
+
+func UpdateUserById(c *fiber.Ctx) error {
+	//Get data of user
+	var data map[string]string
+
+	err := c.BodyParser(&data)
+
+	if err != nil {
+		return err
+	}
+
+	user := models.User{}
+	database.DB.Where("id = ?", data["id"]).First(&user)
+
+	user.Email = data["email"]
+	user.Name = data["name"]
+	user.Surname = data["surname"]
+	user.Login = data["login"]
+
+	pass, err := bcrypt.GenerateFromPassword([]byte(data["password"]), 14)
+
+	user.Password = pass
+
+	database.DB.Save(&user)
+
+	c.Status(fiber.StatusOK)
+	return c.JSON(fiber.Map{
+		"message": "User with ID:"+data["id"]+" updated!",
+	})
 }

@@ -101,4 +101,52 @@ func CreateModule(c *fiber.Ctx) error {
 	return c.JSON(module)
 }
 
+func DeleteModuleById(c *fiber.Ctx) error {
+	//Get data of module
+	var data map[string]string
+
+	err := c.BodyParser(&data)
+
+	if err != nil {
+		return err
+	}
+
+	id := data["id"]
+
+	database.DB.Where("module_id", id).Delete(&models.Lesson{})
+	database.DB.Where("id", id).Delete(&models.Module{})
+
+	c.Status(fiber.StatusOK)
+	return c.JSON(fiber.Map{
+		"message": "Module with ID:"+id+" deleted",
+	})
+}
+
+func UpdateModuleById(c *fiber.Ctx) error {
+	//Get data of user
+	var data map[string]string
+
+	err := c.BodyParser(&data)
+
+	if err != nil {
+		return err
+	}
+
+	module := models.Module{}
+	database.DB.Where("id = ?", data["id"]).First(&module)
+
+	number_of_lessons, _ := strconv.Atoi(data["number_of_lessons"])
+	c_id, _ := strconv.Atoi(data["c_id"])
+
+	module.Number_of_lessons = number_of_lessons
+	module.Title = data["title"]
+	module.CourseId = c_id
+
+	database.DB.Save(&module)
+
+	c.Status(fiber.StatusOK)
+	return c.JSON(fiber.Map{
+		"message": "Module with ID:"+data["id"]+" updated!",
+	})
+}
 
