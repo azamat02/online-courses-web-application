@@ -353,6 +353,86 @@ export default function AdminPanel() {
         }
     }
 
+    async function submitLesson(type, e) {
+        e.preventDefault()
+        if (type === 'add'){
+            let inputs = e.target.querySelectorAll("input")
+            let inputValues = []
+            inputs.forEach(elem=>{
+                inputValues.push(elem.value)
+            })
+            let lessonType = inputValues[0]
+            let lessonModuleId = inputValues[1]
+            let lessonTitle = inputValues[2]
+            let lessonLink = inputValues[3]
+            let lessonContent = e.target.querySelector("textarea").value
+            let lesson = {
+                type: lessonType,
+                m_id: lessonModuleId,
+                title: lessonTitle,
+                link: lessonLink,
+                content: lessonContent
+            }
+            console.log(lesson)
+
+            let status
+            try {
+                status = await adminApi.createLesson(lesson)
+            } catch (err) {
+                setModal(<Modal href={true} open={true} title="Error" info="Something goes wrong, try later!" type="error" buttonLink="/admin" buttonText="Reload page"/>)
+            }
+            if (status) {
+                setModal(<Modal href={true} open={true} title="Success" info="Lesson created successfully!" type="success" buttonLink="/admin" buttonText="Reload page"/>)
+            }
+        }
+        if (type === 'delete'){
+            let inputs = e.target.querySelectorAll("input")
+            let inputValues = []
+            inputs.forEach(elem=>{
+                inputValues.push(elem.value)
+            })
+            let lessonId = inputValues[0]
+            let lesson = {id: lessonId}
+
+            await adminApi.deleteLesson(lesson)
+
+            setModal(<Modal href={true} open={true} title="Success" info={`Lesson with ID:${lessonId} deleted successfully!`} type="success" buttonLink="/admin" buttonText="Reload page"/>)
+        }
+        if (type === 'update'){
+            let inputs = e.target.querySelectorAll("input")
+            let inputValues = []
+            inputs.forEach(elem=>{
+                inputValues.push(elem.value)
+            })
+            let lessonId = inputValues[0]
+            let lessonType = inputValues[1]
+            let lessonModuleId = inputValues[2]
+            let lessonTitle = inputValues[3]
+            let lessonLink = inputValues[4]
+            let lessonContent = e.target.querySelector("textarea").value
+
+            let lesson = {
+                id: lessonId,
+                type: lessonType,
+                m_id: lessonModuleId,
+                title: lessonTitle,
+                link: lessonLink,
+                content: lessonContent
+            }
+
+            let status
+            try {
+                status = await adminApi.updateLesson(lesson)
+            } catch (err) {
+                setModal(<Modal href={true} open={true} title="Error" info="Something goes wrong, try later!" type="error" buttonLink="/admin" buttonText="Reload page"/>)
+            }
+            if (status) {
+                setModal(<Modal href={true} open={true} title="Success" info="Lesson updated successfully!" type="success" buttonLink="/admin" buttonText="Reload page"/>)
+            }
+        }
+    }
+
+
     return (
         <>
             {/*Navbar*/}
@@ -914,7 +994,7 @@ export default function AdminPanel() {
                                 </button>
                             </div>
                             <div className={`${activeAction === 'add' ? ` ` : ` hidden `} mt-10 add-user-form`}>
-                                <form onSubmit={()=>submitCourse()}>
+                                <form onSubmit={(e)=>submitLesson('add', e)}>
                                     <div className="flex items-start">
                                         <div className="mr-2">
                                             <label htmlFor="price"
@@ -950,7 +1030,7 @@ export default function AdminPanel() {
                                 </form>
                             </div>
                             <div className={`${activeAction === 'delete' ? ` ` : ` hidden `} mt-10 add-user-form`}>
-                                <form onSubmit={()=>submitUser()}>
+                                <form onSubmit={(e)=>submitLesson('delete', e)}>
                                     <div className="mr-10 text-lg font-bold">
                                         <h1>Enter lesson id you want delete.</h1>
                                     </div>
@@ -967,7 +1047,7 @@ export default function AdminPanel() {
                                 </form>
                             </div>
                             <div className={`${activeAction === 'update' ? ` ` : ` hidden `} mt-10 add-user-form`}>
-                                <form onSubmit={()=>submitCourse()}>
+                                <form onSubmit={(e)=>submitLesson('update', e)}>
                                     <div className="flex items-start">
                                         <div className="mr-2">
                                             <label htmlFor="price"

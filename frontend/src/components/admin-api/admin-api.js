@@ -75,4 +75,26 @@ export default class AdminApi {
         return data
     }
 
+    // Lessons
+
+    createLesson = async (lesson) => {
+        let data
+        await axios.post(`${this._apiBase}/create_lesson`, lesson)
+            .then(res => {data = res})
+        return data
+    }
+
+    deleteLesson = async (lesson) => {
+        let data
+        await axios.post(`${this._apiBase}/delete_lesson`, lesson)
+            .then(res => {data = res})
+        return data
+    }
+
+    updateLesson = async (lesson) => {
+        let data
+        await axios.post(`${this._apiBase}/update_lesson`, lesson)
+            .then(res => {data = res})
+        return data
+    }
 }
