@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export default class CoursesApi{
     constructor() {
         this._apiBase = 'http://localhost:8000/api';
@@ -118,6 +120,13 @@ export default class CoursesApi{
     getLesson = async (id) => {
         const res = await this.getResource(`/lessons/${id}`);
         return this._transformLesson(res);
+    }
+
+    checkIfUserRated = async(data) => {
+        let res
+        await axios.post(`${this._apiBase}/comments/check`, data)
+            .then(data => {res = data})
+        return res
     }
 
     checkIfPurchasedCourse = async (id) => {

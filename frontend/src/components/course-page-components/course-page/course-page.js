@@ -115,7 +115,7 @@ export default function CoursePage(props){
                 </div>
 
                 {/*Course rating section*/}
-                <CourseRating/>
+                <CourseRating courseId={props.courseId}/>
 
                 {/*Comments section*/}
                 <CommentsSection courseId={props.courseId}/>

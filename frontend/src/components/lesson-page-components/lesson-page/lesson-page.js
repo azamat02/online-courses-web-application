@@ -11,19 +11,31 @@ import { ChevronDownIcon } from '@heroicons/react/solid'
 import ModuleItem from "../../course-page-components/module-item";
 import Modal from "../../tools/modal";
 import {AppContext} from "../../../stateManager";
+import RateModal from "../../tools/modal-rate";
 
 export default function LessonPage(props){
+    // To get is user authorized
     const { appState } = useContext(AppContext)
     const {isAuthorized, userData} = appState
+    // Get lesson id
     const [id, setId] = useState(props.id)
+    // Lesson data
     const [lesson, setLesson] = useState(null)
+    // Modules
     const [modules, setModules] = useState(null)
+    // Check if user purchased course
     const [purchased, setPurchased] = useState(null)
+    // Check if user rated this course
+    const [isRated, setIsRated] = useState(null)
+    // Course id for rating
+    const [courseId, setCourseId] = useState(null)
+    // Course rate modal. appear if user not rated course
+    const [rateModal, setRateModal] = useState(null)
 
     let api = new CoursesApi()
 
     useEffect(()=>{
-        if (modules == null && lesson == null && purchased == null){
+        if (modules == null && lesson == null && purchased == null && courseId === null){
             // Getting lesson and modules and if purchased course
             api.getLesson(id).then((data)=>{
                 api.getModule(data.lessonModuleId).then(data=>{
@@ -35,6 +47,7 @@ export default function LessonPage(props){
                             setPurchased(true)
                         }
                     })
+                    setCourseId(data.moduleCourseId)
                     api.getModulesByCourseId(data.moduleCourseId).then(data=>{
                         setModules(data)
                     })
@@ -42,16 +55,35 @@ export default function LessonPage(props){
                 setLesson(data)
             })
         }
-    }, [modules, lesson, purchased])
+        if (isRated === null && courseId !== null && userData !== null) {
+            let u_id = userData["id"]
+            let c_id = courseId
+            let data = {
+                c_id: ''+c_id,
+                u_id: ''+u_id
+            }
 
+            api.checkIfUserRated(data).then(data=>{
+                if (data.data.message === "User rated") {
+                    setIsRated(true)
+                } else {
+                    setIsRated(false)
+                    // If user not rated course setting timeout to 5 minutes after rate modal will be apear
+                    setTimeout(()=>{
+                        setRateModal(<RateModal open={true} userId={u_id} courseId={c_id}/>)
+                    }, 5000)
+                }
+            })
+        }
+    }, [modules, lesson, purchased, isRated])
+
+    // Loadings and modals
     if (!lesson || !modules || userData == null || purchased === null) {
         return <Spinner/>
     }
-
     if (!isAuthorized) {
         return <Modal type="error" info="You are not authorized. Please sign in/up first" buttonLink={`/signin`} buttonText="Sign in" title="Error" open={true}/>
     }
-
     if (!purchased) {
         return <Modal type="error" info="You are not purchased this course. Please purchase first!" buttonLink={`/`} buttonText="Go to main" title="Error" open={true}/>
     }
@@ -93,6 +125,7 @@ export default function LessonPage(props){
 
     return (
         <>
+            {rateModal}
             {/*Navbar*/}
             <section className="h-16 bg-gray-800 pl-44 pr-44 items-center relative flex justify-between">
                 <div className="flex relative items-center">
