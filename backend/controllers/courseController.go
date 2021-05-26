@@ -145,3 +145,73 @@ func UpdateCourseById(c *fiber.Ctx) error {
 		"message": "Course with ID:"+data["id"]+" updated!",
 	})
 }
+
+func GetCourseRating(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	comments := []models.Comment{}
+
+	//Getting all comments of course
+	database.DB.Where("course_id", id).Find(&comments)
+
+	if (len(comments) != 0) {
+		total_rates_count := 0
+		sum_rates := 0
+
+		rate_0_count := 0
+		rate_1_count := 0
+		rate_2_count := 0
+		rate_3_count := 0
+		rate_4_count := 0
+		rate_5_count := 0
+
+		for _,comment := range comments {
+			rating := comment.Rate
+			total_rates_count ++
+			sum_rates += rating
+
+			if (rating == 5) {
+				rate_5_count ++
+			}
+			if (rating == 4) {
+				rate_4_count ++
+			}
+			if (rating == 3) {
+				rate_3_count ++
+			}
+			if (rating == 2) {
+				rate_2_count ++
+			}
+			if (rating == 1) {
+				rate_1_count ++
+			}
+			if (rating == 0) {
+				rate_0_count ++
+			}
+		}
+
+		total_rating := (100 * sum_rates) / (total_rates_count*5)
+		rating_5 := (100 * rate_5_count) / total_rates_count
+		rating_4 := (100 * rate_4_count) / total_rates_count
+		rating_3 := (100 * rate_3_count) / total_rates_count
+		rating_2 := (100 * rate_2_count) / total_rates_count
+		rating_1 := (100 * rate_1_count) / total_rates_count
+		rating_0 := (100 * rate_0_count) / total_rates_count
+
+		c.Status(fiber.StatusOK)
+		return c.JSON(fiber.Map{
+			"total_rating": total_rating,
+			"rating_5": rating_5,
+			"rating_4": rating_4,
+			"rating_3": rating_3,
+			"rating_2": rating_2,
+			"rating_1": rating_1,
+			"rating_0": rating_0,
+		})
+	} else {
+		c.Status(fiber.StatusNotFound)
+		return c.JSON(fiber.Map{
+			"message": "Comments for this course not found",
+		})
+	}
+}

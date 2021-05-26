@@ -21,6 +21,7 @@ func Setup(app *fiber.App) {
 	app.Get("api/courses/:id", controllers.GetCourse)
 	app.Get("api/courses", controllers.GetAllCourses)
 	app.Post("api/courses", controllers.CreateCourse)
+	app.Get("api/courses/rating/:id", controllers.GetCourseRating)
 
 	//Module routes
 	app.Get("api/modules/:id", controllers.GetModule)
@@ -39,6 +40,7 @@ func Setup(app *fiber.App) {
 	app.Get("api/comments/by_course/:id", controllers.GetCommentsByCourseId)
 	app.Get("api/comments", controllers.GetAllComments)
 	app.Post("api/comments", controllers.CreateComment)
+	app.Post("api/comments/check", controllers.Check)
 
 	//Purchased courses routes
 	app.Get("api/purchased/", controllers.GetAllPurchasedCourses)

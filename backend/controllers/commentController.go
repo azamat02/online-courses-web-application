@@ -5,6 +5,7 @@ import (
 	"online-courses-app/database"
 	"online-courses-app/models"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -95,9 +96,54 @@ func CreateComment(c *fiber.Ctx) error {
 	}
 
 	created_date := time.Now()
-	rate, _ := strconv.Atoi(data["rate"])
+	rate := 0
 	u_id, _ := strconv.Atoi(data["u_id"])
 	c_id, _ := strconv.Atoi(data["c_id"])
+	feedback := data["ctext"]
+
+
+	synonimsForGood := []string{"good", "great", "excellent",
+									"pleasant", "amazing", "fantastic",
+									"valuable", "perfect", "super",
+									"nice", "fine", "satisfying",
+									"brilliant", "awesome", "wonderful",
+									"first-rate", "superior", "the best", "very good"}
+	synonimsForBad := []string{"bad", "sad", "awful", "lousy", "worse", "dreadful", "negative", "very bad", "uncool"}
+
+	badCount := 0
+	goodCount := 0
+
+	//Count "bad words"
+	for _, word := range synonimsForGood {
+		if (strings.Contains(feedback, string(word))) {
+			goodCount++
+		}
+	}
+
+	//Count "good words"
+	for _, word := range synonimsForBad {
+		if (strings.Contains(feedback, word)) {
+			badCount++
+		}
+	}
+	total := badCount + goodCount
+	percentageOfGood := (100*goodCount) / total
+
+	if (percentageOfGood>=80 && percentageOfGood <= 100) {
+		rate = 5
+	}
+	if (percentageOfGood >= 60 && percentageOfGood < 80) {
+		rate = 4
+	}
+	if (percentageOfGood >= 40 && percentageOfGood < 60) {
+		rate = 3
+	}
+	if (percentageOfGood >= 20 && percentageOfGood < 40) {
+		rate = 2
+	}
+	if (percentageOfGood >= 10 && percentageOfGood < 20) {
+		rate = 1
+	}
 
 	//Setting course data
 	comment := models.Comment{
@@ -113,5 +159,35 @@ func CreateComment(c *fiber.Ctx) error {
 
 	//Return comment
 	return c.JSON(comment)
+}
+
+func Check(c *fiber.Ctx) error {
+	//Get data of comment
+	var data map[string]string
+
+	err := c.BodyParser(&data)
+
+	if err != nil {
+		return err
+	}
+
+	user_id := data["u_id"]
+	course_id := data["c_id"]
+
+	comment := models.Comment{}
+
+	//Find if user leave comment
+	database.DB.Where("course_id = ?", course_id).Where("user_id = ?", user_id).First(&comment)
+
+	if (comment.UserId != 0) {
+		c.Status(fiber.StatusOK)
+		return c.JSON(fiber.Map{
+			"message": "User rated",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "User not rated",
+	})
 }
 
