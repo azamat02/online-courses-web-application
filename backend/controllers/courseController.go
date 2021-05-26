@@ -190,7 +190,7 @@ func GetCourseRating(c *fiber.Ctx) error {
 			}
 		}
 
-		total_rating := (100 * sum_rates) / (total_rates_count*5)
+		total_rating := float64(((5*rate_5_count)+(4*rate_4_count)+(3*rate_3_count)+(2*rate_2_count)+(1*rate_1_count))) / float64((total_rates_count))
 		rating_5 := (100 * rate_5_count) / total_rates_count
 		rating_4 := (100 * rate_4_count) / total_rates_count
 		rating_3 := (100 * rate_3_count) / total_rates_count

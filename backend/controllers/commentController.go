@@ -107,7 +107,7 @@ func CreateComment(c *fiber.Ctx) error {
 									"valuable", "perfect", "super",
 									"nice", "fine", "satisfying",
 									"brilliant", "awesome", "wonderful",
-									"first-rate", "superior", "the best", "very good"}
+									"first-rate", "superior", "the best", "very good", "best"}
 	synonimsForBad := []string{"bad", "sad", "awful", "lousy", "worse", "dreadful", "negative", "very bad", "uncool"}
 
 	badCount := 0
@@ -126,23 +126,26 @@ func CreateComment(c *fiber.Ctx) error {
 			badCount++
 		}
 	}
-	total := badCount + goodCount
-	percentageOfGood := (100*goodCount) / total
 
-	if (percentageOfGood>=80 && percentageOfGood <= 100) {
-		rate = 5
-	}
-	if (percentageOfGood >= 60 && percentageOfGood < 80) {
-		rate = 4
-	}
-	if (percentageOfGood >= 40 && percentageOfGood < 60) {
-		rate = 3
-	}
-	if (percentageOfGood >= 20 && percentageOfGood < 40) {
-		rate = 2
-	}
-	if (percentageOfGood >= 10 && percentageOfGood < 20) {
-		rate = 1
+	total := badCount + goodCount
+	if (total != 0) {
+		percentageOfGood := (100*goodCount) / total
+
+		if (percentageOfGood>=80 && percentageOfGood <= 100) {
+			rate = 5
+		}
+		if (percentageOfGood >= 60 && percentageOfGood < 80) {
+			rate = 4
+		}
+		if (percentageOfGood >= 40 && percentageOfGood < 60) {
+			rate = 3
+		}
+		if (percentageOfGood >= 20 && percentageOfGood < 40) {
+			rate = 2
+		}
+		if (percentageOfGood >= 10 && percentageOfGood < 20) {
+			rate = 1
+		}
 	}
 
 	//Setting course data
