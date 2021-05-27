@@ -107,3 +107,34 @@ func UpdateUserById(c *fiber.Ctx) error {
 		"message": "User with ID:"+data["id"]+" updated!",
 	})
 }
+
+func GetUserLogById(c *fiber.Ctx) error {
+	id := c.Params("id")
+	logs := []models.LogOfUser{}
+	var jsonLog []map[string]string
+
+	database.DB.Where("user_id", id).Find(&logs)
+
+	if (len(logs) != 0) {
+		for _,log := range logs {
+			logItem := map[string]string{}
+
+			stringId := strconv.Itoa(int(log.Id))
+			stringUserID := strconv.Itoa(int(log.UserId))
+
+			logItem["id"] = stringId
+			logItem["user_id"] = stringUserID
+			logItem["enter_date"] = log.Enter_date.Format("2006-01-02")
+
+			jsonLog = append(jsonLog, logItem)
+		}
+
+		c.Status(fiber.StatusOK)
+		return c.JSON(jsonLog)
+	}
+
+	c.Status(fiber.StatusNotFound)
+	return c.JSON(fiber.Map{
+		"message": "Logs not found",
+	})
+}
