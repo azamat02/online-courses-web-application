@@ -39,11 +39,35 @@ func GetAllUserPurchasedCourses (c *fiber.Ctx) error {
 	database.DB.Where("user_id = ?", userId).Find(&purchasedCourses)
 
 	for _, purchasedCourse := range purchasedCourses {
+		//Get progress of course
+
+		//Get all lessons thar user completed
+		completedLessonsLog := []models.CompletedLessonLog{}
+		database.DB.Where("user_id = ?", userId).Where("course_id = ?", purchasedCourse.CourseId).Find(&completedLessonsLog)
+
+		//Get all lessons count
+		modules := []models.Module{}
+		database.DB.Where("course_id = ?", purchasedCourse.CourseId).Find(&modules)
+
+		lessons := []models.Lesson{}
+		for _, module := range modules {
+			lessonsItem := []models.Lesson{}
+			database.DB.Where("module_id = ?", module.Id).Find(&lessonsItem)
+			lessons = append(lessons, lessonsItem...)
+		}
+		lessonsCount := len(lessons)
+
+		progress := float64(0)
+		if (lessonsCount != 0) {
+			progress = float64((100 * len(completedLessonsLog))) / float64((lessonsCount))
+		}
+
 		purchasedCourseItem := map[string]string{}
 		purchasedCourseItem["id"] = strconv.Itoa(int(purchasedCourse.Id))
 		purchasedCourseItem["u_id"] = strconv.Itoa(purchasedCourse.UserId)
 		purchasedCourseItem["c_id"] = strconv.Itoa(purchasedCourse.CourseId)
 		purchasedCourseItem["purchased_date"] = purchasedCourse.PurchasedDate.Format("2 January 2006 at 15:15")
+		purchasedCourseItem["course_progress"] = strconv.Itoa(int(progress))
 
 		jsonPurchasedCourses = append(jsonPurchasedCourses, purchasedCourseItem)
 	}

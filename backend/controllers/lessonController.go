@@ -157,3 +157,46 @@ func UpdateLessonById(c *fiber.Ctx) error {
 	})
 }
 
+func GetNextLesson(c *fiber.Ctx)  error {
+	var data map[string]string
+
+	err := c.BodyParser(&data)
+
+	if err != nil {
+		return err
+	}
+
+	courseId := data["c_id"]
+	lessonId, _ := strconv.Atoi(data["l_id"])
+	modules := []models.Module{}
+	lessons := []models.Lesson{}
+
+	database.DB.Where("course_id = ?", courseId).Find(&modules)
+
+	for _, module:= range modules {
+		l := []models.Lesson{}
+		database.DB.Where("module_id", module.Id).Find(&l)
+		lessons = append(lessons, l...)
+	}
+
+	nextLessonId := 0
+
+	for _, lesson:= range lessons {
+		if (lessonId+1 == int(lesson.Id)) {
+			nextLessonId = int(lesson.Id)
+		}
+	}
+
+	if (nextLessonId != 0) {
+		c.Status(fiber.StatusOK)
+		return c.JSON(fiber.Map{
+			"nextLessonId": nextLessonId,
+		})
+	}
+
+	c.Status(fiber.StatusNotFound)
+	return c.JSON(fiber.Map{
+		"message": "Next lesson not found",
+	})
+}
+

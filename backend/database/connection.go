@@ -25,4 +25,6 @@ func Connect() {
 	connection.AutoMigrate(&models.Comment{})
 	connection.AutoMigrate(&models.LogOfUser{})
 	connection.AutoMigrate(&models.PurchasedCourses{})
+	connection.AutoMigrate(&models.CompletedLessonLog{})
+	connection.AutoMigrate(&models.CourseAnalyticsLog{})
 }

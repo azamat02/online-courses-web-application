@@ -23,6 +23,7 @@ func Setup(app *fiber.App) {
 	app.Get("api/courses", controllers.GetAllCourses)
 	app.Post("api/courses", controllers.CreateCourse)
 	app.Get("api/courses/rating/:id", controllers.GetCourseRating)
+	app.Post("api/courses/progress", controllers.GetCourseProgress)
 
 	//Module routes
 	app.Get("api/modules/:id", controllers.GetModule)
@@ -35,6 +36,9 @@ func Setup(app *fiber.App) {
 	app.Get("api/lessons/by_module/:id", controllers.GetLessonsByModuleId)
 	app.Get("api/lessons", controllers.GetAllLessons)
 	app.Post("api/lessons", controllers.CreateLesson)
+	app.Post("api/lessons/next", controllers.GetNextLesson)
+	app.Post("api/lessons/complete", controllers.CompleteLesson)
+	app.Post("api/lessons/iscomplete", controllers.IsLessonCompleted)
 
 	//Comment routes
 	app.Get("api/comments/:id", controllers.GetComment)
@@ -48,6 +52,11 @@ func Setup(app *fiber.App) {
 	app.Get("api/purchased/by_user/:id", controllers.GetAllUserPurchasedCourses)
 	app.Get("api/purchased/has/:id", controllers.CheckIfUserHasPurchasedCourse)
 	app.Post("api/purchased", controllers.CreatePurchasedCourse)
+
+	//Course progress routes
+	app.Get("api/purchased/", controllers.GetAllPurchasedCourses)
+	app.Get("api/purchased/by_user/:id", controllers.GetAllUserPurchasedCourses)
+	app.Get("api/purchased/has/:id", controllers.CheckIfUserHasPurchasedCourse)
 
 	//Admin routes
 	app.Post("api/admin/create_user", controllers.SignUp)
@@ -65,4 +74,8 @@ func Setup(app *fiber.App) {
 	app.Post("api/admin/create_lesson", controllers.CreateLesson)
 	app.Post("api/admin/delete_lesson", controllers.DeleteLessonById)
 	app.Post("api/admin/update_lesson", controllers.UpdateLessonById)
+
+	//Analytics routes
+	app.Post("api/get/course/analytics", controllers.GetCourseAnalyticsByUserId)
+	app.Post("api/create/course/analytics", controllers.CreateCourseAnalyticsLog)
 }
