@@ -29,7 +29,7 @@ func GetCourseAnalyticsByUserId(c *fiber.Ctx) error {
 	for _, log := range logs {
 		logItem := map[string]string{}
 		logItem["log"] = log.Log
-		logItem["Date"] = log.Date.Format("DD MM YYYY at hh:mm")
+		logItem["Date"] = log.Date.Format("02 January 2006 at 15:04")
 
 		jsonLogs = append(jsonLogs, logItem)
 	}
