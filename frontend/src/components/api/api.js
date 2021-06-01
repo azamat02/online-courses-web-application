@@ -207,6 +207,7 @@ export default class CoursesApi{
             purchaseUserId: this.isSet(purchase.u_id),
             purchaseCourseId: this.isSet(purchase.c_id),
             purchaseDate: this.isSet(purchase.purchased_date),
+            courseProgress: this.isSet(purchase.course_progress),
         };
     }
 

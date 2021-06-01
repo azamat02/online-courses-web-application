@@ -1,9 +1,16 @@
 import React, {Component, useContext} from 'react'
 import CoursesApi from "../../api";
 import Spinner from "../../main-page-components/spinner";
-import {Link} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 import {Menu, Transition} from '@headlessui/react'
-import {AdjustmentsIcon, LogoutIcon, UserCircleIcon, UserIcon} from "@heroicons/react/outline";
+import {
+    AdjustmentsIcon,
+    CheckCircleIcon,
+    ChevronDoubleRightIcon, InformationCircleIcon,
+    LogoutIcon,
+    UserCircleIcon,
+    UserIcon
+} from "@heroicons/react/outline";
 import ReactPlayer from "react-player";
 
 import { Fragment, useEffect, useRef, useState } from 'react'
@@ -12,6 +19,8 @@ import ModuleItem from "../../course-page-components/module-item";
 import Modal from "../../tools/modal";
 import {AppContext} from "../../../stateManager";
 import RateModal from "../../tools/modal-rate";
+import axios from "axios";
+import ky from "ky";
 
 export default function LessonPage(props){
     // To get is user authorized
@@ -31,10 +40,29 @@ export default function LessonPage(props){
     const [courseId, setCourseId] = useState(null)
     // Course rate modal. appear if user not rated course
     const [rateModal, setRateModal] = useState(null)
+    // Lesson complete modal
+    const [completeModal, setCompleteModal] = useState(null)
+    // Next lesson id
+    const [nextLessonId, setNextLessonId] = useState(null)
+    // Is lesson completed
+    const [isLessonCompleted, setIsLessonCompleted] = useState(null)
+    const [isLogged, setIsLogged] = useState(false)
 
-    let api = new CoursesApi()
+    let api = new CoursesApi();
 
     useEffect(()=>{
+        if (isLogged === false && userData !== null && courseId !== null) {
+            // Logging enter to lesson
+            (
+                async ()=>{
+                    await ky.post("http://localhost:8000/api/create/course/analytics", {
+                        body: JSON.stringify({u_id: ''+userData.id, c_id: courseId}),
+                        headers: {'Content-Type': 'application/json'}
+                    })
+                }
+            )();
+            setIsLogged(true)
+        }
         if (modules == null && lesson == null && purchased == null && courseId === null){
             // Getting lesson and modules and if purchased course
             api.getLesson(id).then((data)=>{
@@ -75,10 +103,42 @@ export default function LessonPage(props){
                 }
             })
         }
-    }, [modules, lesson, purchased, isRated])
+        if (nextLessonId === null && courseId !== null) {
+            (
+                async ()=>{
+                    await axios.post(`http://localhost:8000/api/lessons/next`, {c_id: courseId, l_id: id}).then(res=>{
+                        let data = res.data
+                        console.log(data)
+                        console.log(`Lesson with id ${data.nextLessonId} find`)
+                        setNextLessonId(+data.nextLessonId)
+                    }).catch(()=>{
+                        console.log(`Next lesson not found`)
+                        setNextLessonId(-1)
+                    })
+                }
+            )()
+        }
+        if (isLessonCompleted === null && userData !== null && id !== null && courseId !== null) {
+            (
+                async ()=>{
+                    let res = await ky.post(`http://localhost:8000/api/lessons/iscomplete`, {
+                        body: JSON.stringify({u_id: ''+userData.id, c_id: courseId, l_id: id}),
+                        headers: {'Content-Type': 'application/json'}
+                    }).json()
+
+                    console.log(res.message)
+                    if (res.message == "Lesson already completed!"){
+                        setIsLessonCompleted(true)
+                    } else {
+                        setIsLessonCompleted(false)
+                    }
+                }
+            )()
+        }
+    }, [modules, lesson, purchased, isRated, isLessonCompleted, isLogged])
 
     // Loadings and modals
-    if (!lesson || !modules || userData == null || purchased === null) {
+    if (!lesson || !modules || userData == null || purchased === null || nextLessonId === null || isLessonCompleted === null) {
         return <Spinner/>
     }
     if (!isAuthorized) {
@@ -110,7 +170,7 @@ export default function LessonPage(props){
         <hr/>
         <div className="modules my-3">
             <h1 className="text-gray-900 text-2xl font-bold my-4">{lessonTitle}</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos exercitationem iusto, magnam numquam officia provident rem tempora temporibus tenetur ut.</p>
+            <p>{lessonContent}</p>
         </div>
         <hr/>
     </div>) :null
@@ -123,9 +183,58 @@ export default function LessonPage(props){
         })
     }
 
+    let nextLesson = ()=>{
+        if (nextLessonId != -1){
+            window.location.href = `http://localhost:3000/lesson/${nextLessonId}`
+        } else {
+            window.location.href = `http://localhost:3000/`
+        }
+    }
+    let completeLesson = async ()=>{
+        console.log({u_id: ''+userData.id, c_id: courseId, l_id: id})
+        let res = await ky.post(`http://localhost:8000/api/lessons/complete`, {
+            body: JSON.stringify({u_id: ''+userData.id, c_id: courseId, l_id: id}),
+            headers: {'Content-Type': 'application/json'}
+        }).json()
+
+        let lesson_Id
+        if (nextLessonId != -1){
+            lesson_Id = nextLessonId
+        }
+        else {
+            lesson_Id = lessonId
+        }
+        if (res.message == "Lesson already completed!") {
+            setCompleteModal(
+                <Modal
+                    title="Info"
+                    type="info"
+                    open={true}
+                    info="You already completed this lesson."
+                    buttonText="Next lesson"
+                    href={true}
+                    buttonLink={`/lesson/${lesson_Id}`}/>
+            )
+        }
+        else {
+            setCompleteModal(
+                <Modal
+                    title="Success"
+                    type="success"
+                    open={true}
+                    info="You completed this lesson. Nice!"
+                    buttonText="Next lesson"
+                    href={true}
+                    buttonLink={`/lesson/${lesson_Id}`}
+                />
+            )
+        }
+    }
+
     return (
         <>
             {rateModal}
+            {completeModal}
             {/*Navbar*/}
             <section className="h-16 bg-gray-800 pl-44 pr-44 items-center relative flex justify-between">
                 <div className="flex relative items-center">
@@ -220,7 +329,25 @@ export default function LessonPage(props){
                 <div className="container mt-5 grid grid-cols-6 gap-4 mb-32">
                     <div className="col-span-4">
                         {lessonContainer}
-                        <br/><br/>
+                        <div className="flex justify-between">
+                            {isLessonCompleted ? <>
+                                <div className="flex items-center border-l-4 border-blue-500 bg-blue-200 text-blue-500 font-bold px-4">
+                                    <InformationCircleIcon className="w-5 h-5 mr-2"/>
+                                    <span>Lesson already completed</span>
+                                </div>
+                            </> : <div></div>}
+                            <div className="flex justify-center">
+                                <button onClick={()=>completeLesson()} className="mr-2 focus:ring-2 focus:outline-none hover:bg-green-600 transition px-8 py-2 text-lg font-bold flex items-center bg-green-500 mt-2 text-white rounded-md">
+                                    <span>Complete lesson</span>
+                                    <CheckCircleIcon className="w-5 h-5 ml-2"/>
+                                </button>
+                                <button onClick={()=>nextLesson()} className="focus:ring-2 focus:outline-none hover:bg-blue-600 transition px-8 py-2 text-lg font-bold flex items-center bg-blue-500 mt-2 text-white rounded-md">
+                                    <span>Next lesson</span>
+                                    <ChevronDoubleRightIcon className="w-5 h-5 ml-2"/>
+                                </button>
+                            </div>
+                        </div>
+                        <br/>
                         <hr/>
                         <h1 className="text-gray-900 text-2xl font-bold my-4">Course materials</h1>
                         {renderedModules}

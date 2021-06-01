@@ -10,10 +10,13 @@
     "@testing-library/react": "^11.2.6",
     "@testing-library/user-event": "^12.8.3",
     "bootstrap": "^4.6.0",
+    "chart.js": "^3.3.0",
     "json-server": "^0.16.3",
     "ky-universal": "^0.9.1",
     "react": "^17.0.2",
     "react-bootstrap": "^1.6.0",
+    "react-calendar-heatmap": "^1.8.1",
+    "react-chartjs-2": "^3.0.3",
     "react-credit-cards": "^0.8.3",
     "react-dom": "^17.0.2",
     "react-icons": "^4.2.0",
@@ -51,8 +54,9 @@
   "devDependencies": {
     "autoprefixer": "^9.8.6",
     "axios": "^0.21.1",
-    "ky": "^0.28.0",
+    "ky": "^0.28.2",
     "postcss": "^7.0.35",
+    "react-tooltip": "^4.2.19",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.2"
   }
 }

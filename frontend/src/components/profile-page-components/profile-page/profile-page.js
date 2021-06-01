@@ -21,7 +21,7 @@ export default function ProfilePage() {
     let api = new CoursesApi()
 
     useEffect(()=>{
-        if (purchasedCourses == null && allCourses == null){
+        if (purchasedCourses == null && allCourses == null && userData !== null )    {
             api.getPurchasedCoursesByUsedId(userData.id).then(data=>{
                 setPurchasedCourses(data)
             })
@@ -51,7 +51,8 @@ export default function ProfilePage() {
             }
         })
 
-        console.log(currentCourse)
+        let courseProgress = Math.round(elem.courseProgress)
+
         return (
             <>
                 <div className="px-6 mb-2 py-4 cursor-pointer">
@@ -61,8 +62,8 @@ export default function ProfilePage() {
                         <p className="text-right inline ml-10 text-gray-600 font-medium text-sm">Purchased date: {elem.purchaseDate}</p>
                         <p className="text-right inline ml-10 text-gray-600 font-medium text-sm">Last study date: 20-05-2021</p>
                     </p>
-                    <p className="text-gray-700 font-bold">Progress 60%</p>
-                    <ProgressBar className="mb-6" now={60} />
+                    <p className="text-gray-700 font-bold">Progress {courseProgress}%</p>
+                    <ProgressBar className="mb-6" now={courseProgress} />
                     <button className="bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50 py-3 px-10 transition font-bold text-white rounded-lg hover:bg-green-600">
                         <LightningBoltIcon className="mb-1 w-5 h-5 inline mr-2"/>
                         Continue study
@@ -80,7 +81,6 @@ export default function ProfilePage() {
             You dont have any purchased courses. <a href="/" className="text-blue-500 underline">Chech courses</a>
         </div>
     )
-
 
     return (
         <>

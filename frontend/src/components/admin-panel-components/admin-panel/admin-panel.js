@@ -3,11 +3,11 @@ import {
     AcademicCapIcon,
     AdjustmentsIcon,
     BookOpenIcon,
-    ChartSquareBarIcon, ChevronRightIcon, CollectionIcon,
+    ChartSquareBarIcon, ChevronLeftIcon, ChevronRightIcon, CollectionIcon,
     HomeIcon,
     LogoutIcon, PlusCircleIcon, RefreshIcon, TableIcon, TrashIcon,
     UserCircleIcon,
-    UserIcon
+    UserIcon, UsersIcon
 } from "@heroicons/react/outline";
 import {
     BsBook,
@@ -26,19 +26,24 @@ import AuthService from "../../auth-service";
 import {AppContext} from "../../../stateManager";
 import AdminApi from "../../admin-api";
 import Modal from "../../tools/modal";
+import UserAnalytics from "../user-analytics";
+import AdminSidebar from "../admin-sidebar";
 
 
 export default function AdminPanel() {
     const { appState } = useContext(AppContext)
     const {isAuthorized, userData} = appState
-    const [show, setShow] = useState(false)
+
+    const [showSideBar, setShowSideBar] = useState(false)
     const [modal, setModal] = useState(null)
     const [tab, setTab] = useState('stats')
     const [activeTab, setActiveTab] = useState(0)
     const [activeAction, setActiveAction] = useState(null)
+    const [userActivity, setUserActivity] = useState(false)
 
     let api = new CoursesApi()
     let authService = new AuthService()
+    const adminApi = new AdminApi()
 
     // Tables with info
     const [users, setUsers] = useState(null);
@@ -46,8 +51,6 @@ export default function AdminPanel() {
     const [modules, setModules] = useState(null);
     const [lessons, setLessons] = useState(null);
     const [isAdmin, setIsAdmin] = useState(null)
-
-    const adminApi = new AdminApi()
 
     useEffect(()=>{
         if (users === null && courses === null && modules === null && lessons === null) {
@@ -94,8 +97,8 @@ export default function AdminPanel() {
         return <Spinner/>
     }
 
-    let toggleShow = () => {
-        setShow(!show);
+    let toggleSideBarShow = () => {
+        setShowSideBar(!showSideBar);
     }
     let openForm = (type) => {
         if (type === 'add') {
@@ -432,22 +435,37 @@ export default function AdminPanel() {
         }
     }
 
+    let showActivity = (userId, userData) => {
+        setUserActivity(
+            <>
+                <UserAnalytics userId={userId} userData={userData}/>
+                <button onClick={hideActivity} className="flex items-center px-4 py-2 bg-gray-900 text-white font-bold rounded-md mt-5 focus:outline-none">
+                    <ChevronLeftIcon className="w-5 h-5 mr-2"/>
+                    <span>Go Back</span>
+                </button>
+            </>
+        )
+    }
+    let hideActivity = () =>{
+        setUserActivity(false)
+    }
 
     return (
         <>
             {/*Navbar*/}
             <section className="h-16 bg-gray-100 shadow-md pl-72 pr-52 items-center relative flex justify-between">
                 <div className="flex relative items-center">
-                    <div className="mr-10 cursor-pointer" onClick={()=>{toggleShow()}}>
-                        <button className={`${!show ? `hidden`: ``} flex items-center focus:outline-none ring-blue-500 transition-opacity transition-1000 active:opacity-0 opacity-100`}>
+                    <div className="mr-10 cursor-pointer" onClick={()=>{toggleSideBarShow()}}>
+                        <button className={`${!showSideBar ? `hidden`: ``} flex items-center focus:outline-none ring-blue-500 transition-opacity transition-1000 active:opacity-0 opacity-100`}>
                             <BsList className="w-9 h-9"/>
                         </button>
-                        <button className={`${show ? `hidden`: ``} flex items-center focus:outline-none ring-blue-500 transition-opacity transition-1000 active:opacity-0 opacity-100`}>
+                        <button className={`${showSideBar ? `hidden`: ``} flex items-center focus:outline-none ring-blue-500 transition-opacity transition-1000 active:opacity-0 opacity-100`}>
                             <GrClose className="w-9 h-9"/>
                         </button>
                     </div>
                     <h1 className="text-gray-900 font-bold text-2xl">ADMIN PANEL</h1>
                 </div>
+                {/*User profile button*/}
                 <div className="flex relative">
                     <div className="flex">
                         <div className="relative inline-block text-left">
@@ -1090,40 +1108,51 @@ export default function AdminPanel() {
                         </div>
                     </div>
                 </div>
+                {/*Users activity section*/}
+                <div className={`${tab === 'users-activity' ? `` : `hidden`} activities`}>
+                    {userActivity !== false ? userActivity :
+                        <>
+                            <h1 className="text-3xl text-gray-900 font-bold flex items-center">
+                                Users activity
+                            </h1>
+                            {/*Forms and tables*/}
+                            <div className="mt-10 mb-24">
+                                {/*Users*/}
+                                <div>
+                                    <table className="rounded-t-lg mt-3 w-5/6 shadow-lg bg-gray-200 text-gray-800">
+                                        <tr className="text-left border-b-2 border-gray-300">
+                                            <th className="px-4 py-3">#ID</th>
+                                            <th className="px-4 py-3">Name</th>
+                                            <th className="px-4 py-3">Surname</th>
+                                            <th className="px-4 py-3">Email</th>
+                                            <th className="px-4 py-3">Login</th>
+                                            <th className="px-4 py-3">User activity</th>
+                                        </tr>
+                                        {
+                                            users.map(elem=>{
+                                                return (
+                                                    <tr className="bg-gray-100 border-b border-gray-200">
+                                                        <td className="px-4 py-3">{elem.userId}</td>
+                                                        <td className="px-4 py-3">{elem.userName}</td>
+                                                        <td className="px-4 py-3">{elem.userSurname}</td>
+                                                        <td className="px-4 py-3">{elem.userEmail}</td>
+                                                        <td className="px-4 py-3">{elem.userLogin}</td>
+                                                        <td className="p-2">
+                                                            <button onClick={()=>showActivity(elem.userId, elem)} className="focus:outline-none transition hover:bg-blue-600 px-4 py-2 bg-blue-500 text-white font-bold rounded-md">Show activity</button>
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            })
+                                        }
+                                    </table>
+                                </div>
+                            </div>
+                        </>
+                    }
+                </div>
             </div>
             {/*Sidebar*/}
-            <div className={`${show ? '-translate-x-full': ``} fixed inset-y-0 left-0 p-4 w-64 h-full bg-gray-800 transform transition-200 ease-in-out`}>
-                <Link to="/">
-                    <h1 className="text-white font-bold text-center text-xl mt-10 mb-10 cursor-pointer">ONLINE COURSES</h1>
-                </Link>
-
-                <Link to="/">
-                    <div className="mt-2 hover:bg-blue-500 transition font-bold cursor-pointer bg-gray-900 text-gray-100 flex items-center px-5 py-3 rounded-lg">
-                        <HomeIcon className="w-5 h-5 mr-2"/>
-                        <span>Home</span>
-                    </div>
-                </Link>
-
-                <Link to="/contacts">
-                    <div className="mt-2 hover:bg-blue-500 transition font-bold cursor-pointer bg-gray-900 text-gray-100 flex items-center px-5 py-3 rounded-lg">
-                        <TiContacts className="w-5 h-5 mr-2"/>
-                        <span>Contacts</span>
-                    </div>
-                </Link>
-
-                <div onClick={()=>{setTab('tables')}} className="mt-2 hover:bg-blue-500 transition font-bold cursor-pointer bg-gray-900 text-gray-100 flex items-center px-5 py-3 rounded-lg">
-                    <TableIcon className="w-5 h-5 mr-2"/>
-                    <span>Tables</span>
-                </div>
-
-                <div onClick={()=>{setTab('stats')}} className="mt-2 hover:bg-blue-500 transition font-bold cursor-pointer bg-gray-900 text-gray-100 flex items-center px-5 py-3 rounded-lg">
-                    <ChartSquareBarIcon className="w-5 h-5 mr-2"/>
-                    <span>Statistics</span>
-                </div>
-
-
-            </div>
-
+            <AdminSidebar show={showSideBar} hideActivity={hideActivity} setTab={setTab}/>
         </>
     )
 }

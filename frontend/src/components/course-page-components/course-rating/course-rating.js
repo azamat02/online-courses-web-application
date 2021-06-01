@@ -16,6 +16,8 @@ export default function CourseRating({courseId}){
                 async()=>{
                     await axios.get(`http://localhost:8000/api/courses/rating/${courseId}`).then(res=>{
                         setRateData(res.data)
+                    }).catch(()=>{
+                        setRateData(false)
                     })
                 }
             )()
@@ -24,6 +26,14 @@ export default function CourseRating({courseId}){
 
     if (rateData === null) {
         return <Spinner/>
+    }
+    if (rateData === false) {
+        return (
+            <div className="mb-24">
+                <h1 className="text-3xl font-bold mb-10">Students feedback</h1>
+                <h1 className="">There is no rating yet.</h1>
+            </div>
+        )
     }
 
     let stars = [1,2,3,4,5].map(elem=>{
