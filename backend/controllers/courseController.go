@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+//Get 1 course
 func GetCourse(c *fiber.Ctx) error {
 	id := c.Params("id")
 
@@ -36,6 +37,7 @@ func GetCourse(c *fiber.Ctx) error {
 	return c.JSON(jsonCourse)
 }
 
+//Get all courses
 func GetAllCourses(c *fiber.Ctx) error {
 	var courses []models.Course
 	var jsonCourses []map[string]string
@@ -59,6 +61,7 @@ func GetAllCourses(c *fiber.Ctx) error {
 	return c.JSON(jsonCourses)
 }
 
+//Create course
 func CreateCourse(c *fiber.Ctx) error {
 	//Get data of course
 	var data map[string]string
@@ -88,6 +91,7 @@ func CreateCourse(c *fiber.Ctx) error {
 	return c.JSON(course)
 }
 
+//Delet course by id
 func DeleteCourseById(c *fiber.Ctx) error {
 	//Get data of user
 	var data map[string]string
@@ -119,6 +123,7 @@ func DeleteCourseById(c *fiber.Ctx) error {
 	})
 }
 
+//Update course by id
 func UpdateCourseById(c *fiber.Ctx) error {
 	//Get data of user
 	var data map[string]string
@@ -146,6 +151,7 @@ func UpdateCourseById(c *fiber.Ctx) error {
 	})
 }
 
+//Get course rating by comments
 func GetCourseRating(c *fiber.Ctx) error {
 	id := c.Params("id")
 

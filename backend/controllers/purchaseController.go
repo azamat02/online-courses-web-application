@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+//Get all purchased courses
 func GetAllPurchasedCourses (c *fiber.Ctx) error {
 	var purchasedCourses []models.PurchasedCourses
 	var jsonPurchasedCourses []map[string]string
@@ -29,6 +30,7 @@ func GetAllPurchasedCourses (c *fiber.Ctx) error {
 	return c.JSON(jsonPurchasedCourses)
 }
 
+//Get all purchased courses of user
 func GetAllUserPurchasedCourses (c *fiber.Ctx) error {
 	userId := c.Params("id")
 
@@ -75,6 +77,7 @@ func GetAllUserPurchasedCourses (c *fiber.Ctx) error {
 	return c.JSON(jsonPurchasedCourses)
 }
 
+//Create purchase
 func CreatePurchasedCourse (c *fiber.Ctx) error {
 	//Get data of purchased course
 	var data map[string]string
@@ -104,6 +107,7 @@ func CreatePurchasedCourse (c *fiber.Ctx) error {
 	return c.JSON(purchased_course)
 }
 
+//Check if user purchased course
 func CheckIfUserHasPurchasedCourse (c *fiber.Ctx) error {
 	courseId := c.Params("id")
 

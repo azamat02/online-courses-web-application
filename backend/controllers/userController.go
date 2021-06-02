@@ -8,6 +8,7 @@ import (
 	"strconv"
 )
 
+//Get all users
 func GetAllUsers(c *fiber.Ctx) error {
 	var users []models.User
 	var jsonUsers []map[string]string
@@ -29,6 +30,7 @@ func GetAllUsers(c *fiber.Ctx) error {
 	return c.JSON(jsonUsers)
 }
 
+//Get user
 func GetUser(c *fiber.Ctx) error {
 	id := c.Params("id")
 
@@ -56,6 +58,7 @@ func GetUser(c *fiber.Ctx) error {
 	return c.JSON(jsonUser)
 }
 
+//Delete user by id
 func DeleteUserById(c *fiber.Ctx) error {
 	//Get data of user
 	var data map[string]string
@@ -78,6 +81,7 @@ func DeleteUserById(c *fiber.Ctx) error {
 	})
 }
 
+//Update user by id
 func UpdateUserById(c *fiber.Ctx) error {
 	//Get data of user
 	var data map[string]string
@@ -108,6 +112,7 @@ func UpdateUserById(c *fiber.Ctx) error {
 	})
 }
 
+//Get user auth logs
 func GetUserLogById(c *fiber.Ctx) error {
 	id := c.Params("id")
 	logs := []models.LogOfUser{}

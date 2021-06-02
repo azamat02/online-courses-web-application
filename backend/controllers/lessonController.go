@@ -7,6 +7,7 @@ import (
 	"strconv"
 )
 
+//Get 1 lesson by id
 func GetLesson(c *fiber.Ctx) error {
 	id := c.Params("id")
 
@@ -34,6 +35,7 @@ func GetLesson(c *fiber.Ctx) error {
 	return c.JSON(jsonLesson)
 }
 
+//Get module lessons
 func GetLessonsByModuleId(c *fiber.Ctx) error {
 	id := c.Params("id")
 
@@ -58,6 +60,7 @@ func GetLessonsByModuleId(c *fiber.Ctx) error {
 	return c.JSON(jsonLessons)
 }
 
+//Get all lessons
 func GetAllLessons(c *fiber.Ctx) error {
 	var lessons []models.Lesson
 	var jsonLessons []map[string]string
@@ -80,6 +83,7 @@ func GetAllLessons(c *fiber.Ctx) error {
 	return c.JSON(jsonLessons)
 }
 
+//Create lesson
 func CreateLesson(c *fiber.Ctx) error {
 	//Get data of lesson
 	var data map[string]string
@@ -108,6 +112,7 @@ func CreateLesson(c *fiber.Ctx) error {
 	return c.JSON(lesson)
 }
 
+//Delete lesson by id
 func DeleteLessonById(c *fiber.Ctx) error {
 	//Get data of lesson
 	var data map[string]string
@@ -128,6 +133,7 @@ func DeleteLessonById(c *fiber.Ctx) error {
 	})
 }
 
+//Update lesson by id
 func UpdateLessonById(c *fiber.Ctx) error {
 	//Get data of user
 	var data map[string]string

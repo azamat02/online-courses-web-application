@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+//Get user progress in course
 func GetCourseProgress(c *fiber.Ctx) error {
 	var data map[string]string
 
@@ -95,6 +96,7 @@ func CompleteLesson(c *fiber.Ctx) error {
 	})
 }
 
+//Check if user completed lesson
 func IsLessonCompleted(c *fiber.Ctx) error {
 	var data map[string]string
 

@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+//Get course analytics of user by id
 func GetCourseAnalyticsByUserId(c *fiber.Ctx) error {
 	//Get data
 	var data map[string]string
@@ -38,6 +39,7 @@ func GetCourseAnalyticsByUserId(c *fiber.Ctx) error {
 	return c.JSON(jsonLogs)
 }
 
+//Create analytics log when user completed lesson or entered to it
 func CreateCourseAnalyticsLog(c *fiber.Ctx) error {
 	//Get data
 	var data map[string]string

@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+//Get 1 comment by id
 func GetComment(c *fiber.Ctx) error {
 	id := c.Params("id")
 
@@ -38,6 +39,7 @@ func GetComment(c *fiber.Ctx) error {
 	return c.JSON(jsonComment)
 }
 
+//Get all comments
 func GetAllComments(c *fiber.Ctx) error {
 	var comments []models.Comment
 	var jsonComments []map[string]string
@@ -61,6 +63,7 @@ func GetAllComments(c *fiber.Ctx) error {
 	return c.JSON(jsonComments)
 }
 
+//Get comments of course
 func GetCommentsByCourseId(c *fiber.Ctx) error {
 	courseId := c.Params("id")
 	var comments []models.Comment
@@ -85,6 +88,7 @@ func GetCommentsByCourseId(c *fiber.Ctx) error {
 	return c.JSON(jsonComments)
 }
 
+//Creating comment adn rate by comment text
 func CreateComment(c *fiber.Ctx) error {
 	//Get data of comment
 	var data map[string]string
@@ -164,6 +168,7 @@ func CreateComment(c *fiber.Ctx) error {
 	return c.JSON(comment)
 }
 
+//Check if user leaved feadback to the course
 func Check(c *fiber.Ctx) error {
 	//Get data of comment
 	var data map[string]string

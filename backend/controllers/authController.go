@@ -12,6 +12,7 @@ import (
 
 const SecretKey = "secret"
 
+//Registration
 func SignUp(c *fiber.Ctx) error{
 	//Get data of user
 	var data map[string]string
@@ -54,6 +55,7 @@ func SignUp(c *fiber.Ctx) error{
 	return c.JSON(user)
 }
 
+//Login
 func SignIn(c *fiber.Ctx) error {
 	//Get data of user
 	var data map[string]string
@@ -123,6 +125,7 @@ func SignIn(c *fiber.Ctx) error {
 	})
 }
 
+//Get authorized user info by jwt token
 func User(c *fiber.Ctx) error {
 	//Get jwt from cookie
 	cookie := c.Cookies("jwt")
@@ -149,6 +152,7 @@ func User(c *fiber.Ctx) error {
 	return c.JSON(user)
 }
 
+//Logout
 func Logout(c *fiber.Ctx) error {
 	//Destruct cookie
 	cookie := fiber.Cookie{
@@ -165,6 +169,7 @@ func Logout(c *fiber.Ctx) error {
 	}))
 }
 
+//Check if user is admin
 func IsAdmin(c *fiber.Ctx) error {
 	//Get jwt from cookie
 	cookie := c.Cookies("jwt")
