@@ -10,6 +10,7 @@ func Setup(app *fiber.App) {
 	app.Get("api/users/:id", controllers.GetUser)
 	app.Get("api/users", controllers.GetAllUsers)
 	app.Get("api/users/log/:id", controllers.GetUserLogById)
+	app.Get("api/users/recs/:id", controllers.GetUserRecommendations)
 
 	//Authorization routes
 	app.Post("api/sign_up", controllers.SignUp)

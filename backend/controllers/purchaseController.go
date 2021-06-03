@@ -147,15 +147,7 @@ func CheckIfUserHasPurchasedCourse (c *fiber.Ctx) error {
 
 func GetUserRecommendations (c *fiber.Ctx) error {
 	//Get data
-	var data map[string]string
-
-	err := c.BodyParser(&data)
-
-	if err != nil {
-		return err
-	}
-
-	u_id, _ := strconv.Atoi(data["u_id"])
+	u_id, _ := strconv.Atoi(c.Params("id"))
 
 	purchasedCourse := models.PurchasedCourses{}
 
