@@ -144,3 +144,76 @@ func CheckIfUserHasPurchasedCourse (c *fiber.Ctx) error {
 		"message": "User not purchased course",
 	})
 }
+
+func GetUserRecommendations (c *fiber.Ctx) error {
+	//Get data
+	var data map[string]string
+
+	err := c.BodyParser(&data)
+
+	if err != nil {
+		return err
+	}
+
+	u_id, _ := strconv.Atoi(data["u_id"])
+
+	purchasedCourse := models.PurchasedCourses{}
+
+	database.DB.Where("user_id = ?", u_id).First(&purchasedCourse)
+
+	//If user purchased at least one course
+	if (purchasedCourse.Id != 0){
+		course := models.Course{}
+		database.DB.Where("id = ?", purchasedCourse.CourseId).First(&course)
+
+		category := course.Category
+
+		recommendCourses := []models.Course{}
+		database.DB.Where("category = ?", category).Where("id != ?", course.Id).Find(&recommendCourses)
+		var jsonRecCourses []map[string]string
+
+		for _, course := range recommendCourses {
+			courseItem := map[string]string{}
+			courseItem["id"] = strconv.Itoa(int(course.Id))
+			courseItem["img"] = course.Img
+			courseItem["title"] = course.Title
+			courseItem["desc"] = course.Description
+			courseItem["created_data"] = course.Created_data.Format("2 January 2006")
+			courseItem["req"] = course.Req
+			courseItem["what_you_will_learn"] = course.What_you_will_learn
+			courseItem["category"] = course.Category
+
+			jsonRecCourses = append(jsonRecCourses, courseItem)
+		}
+
+		c.Status(fiber.StatusOK)
+		return c.JSON(jsonRecCourses)
+	}
+
+	//If user hasn't purchased at least one course
+	popularCourses := []models.PurchasedCourses{}
+	sql := "SELECT COUNT(`course_id`) AS `count` FROM `purchased_courses` GROUP BY `course_id` ORDER BY `count` DESC LIMIT 4"
+	database.DB.Raw(sql).Find(&popularCourses)
+	var jsonPopCourses []map[string]string
+
+	for _, course := range popularCourses {
+		courseId := course.CourseId
+		findedCourse := models.Course{}
+		database.DB.Where("id = ?", courseId).First(&findedCourse)
+
+		courseItem := map[string]string{}
+		courseItem["id"] = strconv.Itoa(int(findedCourse.Id))
+		courseItem["img"] = findedCourse.Img
+		courseItem["title"] = findedCourse.Title
+		courseItem["desc"] = findedCourse.Description
+		courseItem["created_data"] = findedCourse.Created_data.Format("2 January 2006")
+		courseItem["req"] = findedCourse.Req
+		courseItem["what_you_will_learn"] = findedCourse.What_you_will_learn
+		courseItem["category"] = findedCourse.Category
+
+		jsonPopCourses = append(jsonPopCourses, courseItem)
+	}
+
+	c.Status(fiber.StatusOK)
+	return c.JSON(jsonPopCourses)
+}
