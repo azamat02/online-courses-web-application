@@ -184,7 +184,7 @@ func GetUserRecommendations (c *fiber.Ctx) error {
 
 	//If user hasn't purchased at least one course
 	popularCourses := []models.PurchasedCourses{}
-	sql := "SELECT COUNT(`course_id`) AS `count` FROM `purchased_courses` GROUP BY `course_id` ORDER BY `count` DESC LIMIT 4"
+	sql := "SELECT course_id,COUNT(course_id) AS count FROM purchased_courses GROUP BY course_id ORDER BY count DESC LIMIT 4"
 	database.DB.Raw(sql).Find(&popularCourses)
 	var jsonPopCourses []map[string]string
 
