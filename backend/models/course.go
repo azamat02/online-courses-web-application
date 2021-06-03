@@ -10,4 +10,5 @@ type Course struct {
 	Created_data time.Time `json:"created_data"`
 	Req string `json:"req"`
 	What_you_will_learn string `json:"what_you_will_learn"`
+	Category string `json:"category"`
 }
