@@ -17,6 +17,7 @@ import AuthService from "./components/auth-service";
 import {AppContext, AppReducer} from "./stateManager";
 import AdminPanel from "./components/admin-panel-components/admin-panel";
 import NotFound from "./components/error-pages/404";
+import UserRecommendations from "./components/main-page-components/user-recommendations";
 
 export default function App(){
     let api = new CoursesApi();
@@ -27,6 +28,7 @@ export default function App(){
         isAuthorized: false,
         userData: null
     })
+    const {isAuthorized, userData} = appState
 
     useEffect(()=>{
         (
@@ -76,6 +78,11 @@ export default function App(){
                                 <main>
                                     <CoursesSlider courses = {courses}/>
                                     <CoursesList courses = {courses}/>
+                                    {
+                                        isAuthorized ?
+                                        <UserRecommendations userId={userData.id}/> :
+                                        ''
+                                    }
                                 </main>
                                 <Footer/>
                             </div>
