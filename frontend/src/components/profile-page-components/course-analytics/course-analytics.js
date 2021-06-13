@@ -4,16 +4,17 @@ import Spinner from "../../main-page-components/spinner";
 import {XCircleIcon} from "@heroicons/react/outline";
 import {Line} from "react-chartjs-2";
 import AnalyticsChart from "../analytics-chart";
+import CoursesApi from "../../api";
 
 export default function CourseAnalytics({courseId, userId, show, openTab, closeTab}){
     const [courseAnalyticsData, setCourseAnalyticsData] = useState(null)
+    let api = new CoursesApi()
 
     useEffect(()=>{
         if (courseAnalyticsData === null) {
             (
                 async()=>{
-                    let analytics = await axios.post("http://localhost:8000/api/get/course/analytics",
-                        {c_id: ''+courseId, u_id: ''+userId})
+                    let analytics = await api.getUserCourseAnalytics({c_id: ''+courseId, u_id: ''+userId})
                     setCourseAnalyticsData(analytics.data)
                 }
             )()

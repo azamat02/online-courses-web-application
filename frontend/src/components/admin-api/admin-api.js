@@ -8,6 +8,17 @@ export default class AdminApi {
 
     // Users
 
+
+    getUserLog = async (userId) => {
+        let data
+        await axios.get(`http://localhost:8000/api/users/log/${userId}`).then(res=>{
+            data = res.data
+        }).catch(()=>{
+            data = []
+        })
+        return data
+    }
+
     createUser = async (user) => {
         let data
         await axios.post(`${this._apiBase}/create_user`, user)

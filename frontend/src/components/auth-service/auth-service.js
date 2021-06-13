@@ -1,8 +1,13 @@
 import React, {Component} from "react";
 
 export default class AuthService extends Component{
+    constructor(props) {
+        super(props);
+        this._apiBase = `http://localhost:8000/api`
+    }
+
     isAuthorized = async () => {
-        let res = await fetch("http://localhost:8000/api/user", {
+        let res = await fetch(`${this._apiBase}/user`, {
             headers: {'Content-type': 'application/json'},
             credentials: 'include'
         })
@@ -17,7 +22,7 @@ export default class AuthService extends Component{
     }
 
     SignIn = async (email, password) => {
-        let response = await fetch("http://localhost:8000/api/sign_in", {
+        let response = await fetch(`${this._apiBase}/sign_in`, {
             method: "POST",
             headers: {'Content-type': 'application/json'},
             credentials: 'include',
@@ -33,7 +38,7 @@ export default class AuthService extends Component{
     }
 
     SignUp = async (email, name, surname, login, pass) => {
-        let response = await fetch("http://localhost:8000/api/sign_up", {
+        let response = await fetch(`${this._apiBase}/sign_up`, {
             method: "POST",
             headers: {'Content-type': 'application/json'},
             body: JSON.stringify({
@@ -50,7 +55,7 @@ export default class AuthService extends Component{
     }
 
     LogOut = async () => {
-        await fetch("http://localhost:8000/api/logout", {
+        await fetch(`${this._apiBase}/logout`, {
             method: "POST",
             headers: {'Content-type': 'application/json'},
             credentials: 'include'
@@ -58,7 +63,7 @@ export default class AuthService extends Component{
     }
 
     IsAdmin = async () => {
-        let res = await fetch("http://localhost:8000/api/admin", {
+        let res = await fetch(`${this._apiBase}/admin`, {
             headers: {'Content-type': 'application/json'},
             credentials: 'include'
         })

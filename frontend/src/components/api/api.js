@@ -129,8 +129,13 @@ export default class CoursesApi{
         return res
     }
 
+    getUserCourseAnalytics = async(data) => {
+        let res = axios.post(`${this._apiBase}/get/course/analytics`, data)
+        return res
+    }
+
     checkIfPurchasedCourse = async (id) => {
-        let res = await fetch(`http://localhost:8000/api/purchased/has/${id}`, {
+        let res = await fetch(`${this._apiBase}/purchased/has/${id}`, {
             headers: {'Content-type': 'application/json'},
             credentials: 'include'
         })
@@ -146,6 +151,11 @@ export default class CoursesApi{
         } else {
             return 'no data'
         }
+    }
+
+    getUserRecs = async (userId)=>{
+        let res = await axios.get(`${this._apiBase}/users/recs/${userId}`)
+        return res
     }
 
     _transformUser = (user) => {

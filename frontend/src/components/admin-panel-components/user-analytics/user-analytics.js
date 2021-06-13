@@ -3,26 +3,23 @@ import ReactDOM from 'react-dom';
 import CalendarHeatmap from 'react-calendar-heatmap';
 import ReactTooltip from 'react-tooltip';
 
-// import 'react-calendar-heatmap/dist/styles.css';
 import './styles.css'
-import CoursesApi from "../../api";
-import axios from "axios";
 import Spinner from "../../main-page-components/spinner";
+import AdminApi from "../../admin-api";
 
 const today = new Date();
 
 export default function UserAnalytics({userId, userData}) {
     const [userLog, setUserLog] = useState(null)
+    let adminApi = new AdminApi()
 
     useEffect(()=>{
         if (userLog === null) {
             (
                 async ()=>{
-                    await axios.get(`http://localhost:8000/api/users/log/${userId}`).then(res=>{
-                        setUserLog(res.data)
-                    }).catch(()=>{
-                        setUserLog([])
-                    })
+                    let data = await adminApi.getUserLog(userId)
+                    console.log(data)
+                    setUserLog(data)
                 }
             )()
         }

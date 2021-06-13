@@ -21,6 +21,7 @@ import {AppContext} from "../../../stateManager";
 import RateModal from "../../tools/modal-rate";
 import axios from "axios";
 import ky from "ky";
+import LessonApi from "../../lesson-api";
 
 export default function LessonPage(props){
     // To get is user authorized
@@ -49,16 +50,14 @@ export default function LessonPage(props){
     const [isLogged, setIsLogged] = useState(false)
 
     let api = new CoursesApi();
+    let lessonApi = new LessonApi()
 
     useEffect(()=>{
         if (isLogged === false && userData !== null && courseId !== null) {
             // Logging enter to lesson
             (
                 async ()=>{
-                    await ky.post("http://localhost:8000/api/create/course/analytics", {
-                        body: JSON.stringify({u_id: ''+userData.id, c_id: courseId}),
-                        headers: {'Content-Type': 'application/json'}
-                    })
+                    await lessonApi.logUserEnter({u_id: ''+userData.id, c_id: courseId})
                 }
             )();
             setIsLogged(true)
@@ -106,25 +105,24 @@ export default function LessonPage(props){
         if (nextLessonId === null && courseId !== null) {
             (
                 async ()=>{
-                    await axios.post(`http://localhost:8000/api/lessons/next`, {c_id: courseId, l_id: id}).then(res=>{
-                        let data = res.data
-                        console.log(data)
-                        console.log(`Lesson with id ${data.nextLessonId} find`)
-                        setNextLessonId(+data.nextLessonId)
-                    }).catch(()=>{
-                        console.log(`Next lesson not found`)
-                        setNextLessonId(-1)
-                    })
+                    await lessonApi.getNextLesson({c_id: courseId, l_id: id})
+                        .then((res)=>{
+                            let data = res.data
+                            console.log(data)
+                            console.log(`Lesson with id ${data.nextLessonId} find`)
+                            setNextLessonId(+data.nextLessonId)
+                        })
+                        .catch(()=>{
+                            console.log(`Next lesson not found`)
+                            setNextLessonId(-1)
+                        })
                 }
             )()
         }
         if (isLessonCompleted === null && userData !== null && id !== null && courseId !== null) {
             (
                 async ()=>{
-                    let res = await ky.post(`http://localhost:8000/api/lessons/iscomplete`, {
-                        body: JSON.stringify({u_id: ''+userData.id, c_id: courseId, l_id: id}),
-                        headers: {'Content-Type': 'application/json'}
-                    }).json()
+                    let res = await lessonApi.isLessonCompleted({u_id: ''+userData.id, c_id: courseId, l_id: id})
 
                     console.log(res.message)
                     if (res.message == "Lesson already completed!"){

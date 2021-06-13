@@ -3,15 +3,17 @@ import axios from "axios";
 import Spinner from "../spinner";
 import {ChevronRightIcon} from "@heroicons/react/outline";
 import {Link} from "react-router-dom";
+import CoursesApi from "../../api";
 
 export default function UserRecommendations({userId}) {
     const [recCourses, setRecCourses] = useState(null)
+    let api = new CoursesApi()
 
     useEffect(()=>{
         if (recCourses === null) {
             (
                 async ()=>{
-                    let res = await axios.get(`http://localhost:8000/api/users/recs/${userId}`)
+                    let res = await api.getUserRecs(userId)
                     setRecCourses(res.data)
                 }
             )()

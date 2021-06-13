@@ -1,11 +1,7 @@
 import React, {Component, useEffect, useState} from "react"
 import CoursesApi from "../../api";
-import {Disclosure} from "@headlessui/react";
-import {ChevronUpIcon} from "@heroicons/react/solid";
-import {PlayIcon} from "@heroicons/react/outline";
 import {CheckIcon} from "@heroicons/react/solid";
 import {CheckCircleIcon} from "@heroicons/react/outline";
-import {BookOpenIcon} from "@heroicons/react/outline";
 import Spinner from "../../main-page-components/spinner";
 import CourseHeader from "../course-header-item";
 import CommentsSection from "../comments-section";
