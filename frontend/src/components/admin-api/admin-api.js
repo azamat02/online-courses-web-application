@@ -11,7 +11,7 @@ export default class AdminApi {
 
     getUserLog = async (userId) => {
         let data
-        await axios.get(`http://localhost:8000/api/users/log/${userId}`).then(res=>{
+        await axios.get(`http://89.223.24.146:8000/api/users/log/${userId}`).then(res=>{
             data = res.data
         }).catch(()=>{
             data = []

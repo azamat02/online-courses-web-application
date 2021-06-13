@@ -5,7 +5,7 @@ import axios from "axios";
 export default class LessonApi extends Component{
     constructor(props) {
         super(props);
-        this._apiBase = `http://localhost:8000/api`
+        this._apiBase = `http://89.223.24.146g:8000/api`
     }
 
     logUserEnter = async(data)=>{

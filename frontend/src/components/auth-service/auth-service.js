@@ -3,7 +3,7 @@ import React, {Component} from "react";
 export default class AuthService extends Component{
     constructor(props) {
         super(props);
-        this._apiBase = `http://localhost:8000/api`
+        this._apiBase = `http://89.223.24.146:8000/api`
     }
 
     isAuthorized = async () => {
