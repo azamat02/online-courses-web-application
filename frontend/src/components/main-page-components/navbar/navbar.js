@@ -121,7 +121,6 @@ export default function Navbar(props){
                     </Link>
                     <li className={`${activeLink === 'main' ? `text-blue-500` : ``} ml-12 block text-lg flex items-center mr-4 font-medium`}><Link to="/">Main page</Link></li>
                     <li className={`${activeLink === 'contacts' ? `text-blue-500` : ``} ml-8 block text-lg flex items-center mr-4 font-medium`}><Link to="/contacts">Contacts</Link></li>
-                    <li className={`${activeLink === 'help' ? `text-blue-500` : ``} ml-8 block text-lg flex items-center mr-4 font-medium`}><Link to="/help">Help</Link></li>
                 </ul>
                 <ul className="nav-links">
                     {authBlock}

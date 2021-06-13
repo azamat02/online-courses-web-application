@@ -33,7 +33,6 @@ func GetAllUsers(c *fiber.Ctx) error {
 //Get user
 func GetUser(c *fiber.Ctx) error {
 	id := c.Params("id")
-
 	var user models.User
 
 	//Find by id
