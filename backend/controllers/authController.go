@@ -115,7 +115,7 @@ func SignIn(c *fiber.Ctx) error {
 		Name: "jwt",
 		Value: token,
 		Expires: time.Now().Add(time.Hour*23),
-		SameSite: "",
+		SameSite: "strict",
 	}
 
 	c.Cookie(&cookie)
@@ -159,7 +159,7 @@ func Logout(c *fiber.Ctx) error {
 		Name: "jwt",
 		Value: "",
 		Expires: time.Now().Add(-time.Hour),
-		SameSite: "",
+		SameSite: "strict",
 	}
 
 	c.Cookie(&cookie)
