@@ -116,7 +116,7 @@ func SignIn(c *fiber.Ctx) error {
 		Value: token,
 		Expires: time.Now().Add(time.Hour*23),
 		HTTPOnly: true,
-		SameSite: "none",
+		SameSite: "strict",
 	}
 
 	c.Cookie(&cookie)
@@ -161,7 +161,7 @@ func Logout(c *fiber.Ctx) error {
 		Value: "",
 		Expires: time.Now().Add(-time.Hour),
 		HTTPOnly: true,
-		SameSite: "none",
+		SameSite: "strict",
 	}
 
 	c.Cookie(&cookie)
