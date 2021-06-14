@@ -15,7 +15,13 @@ func main() {
 	app := fiber.New()
 
 	app.Use(cors.New(cors.Config{
+		Next:             nil,
+		AllowOrigins:     "*",
+		AllowMethods:     "GET,POST,HEAD,PUT,DELETE,PATCH",
+		AllowHeaders:     "",
 		AllowCredentials: true,
+		ExposeHeaders:    "",
+		MaxAge:           0,
 	}))
 
 	//Setup all routes
