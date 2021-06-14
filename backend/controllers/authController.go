@@ -114,8 +114,9 @@ func SignIn(c *fiber.Ctx) error {
 	cookie := fiber.Cookie{
 		Name: "jwt",
 		Value: token,
+		HTTPOnly: true,
 		Expires: time.Now().Add(time.Hour*23),
-		SameSite: "strict",
+		SameSite: "none",
 	}
 
 	c.Cookie(&cookie)
@@ -124,6 +125,26 @@ func SignIn(c *fiber.Ctx) error {
 		"message": "Success",
 	})
 }
+
+//Logout
+func Logout(c *fiber.Ctx) error {
+	//Destruct cookie
+	cookie := fiber.Cookie{
+		Name: "jwt",
+		Value: "",
+		HTTPOnly: true,
+		Expires: time.Now().Add(-time.Hour),
+		SameSite: "none",
+	}
+
+	c.Cookie(&cookie)
+
+	return (c.JSON(fiber.Map{
+		"message": "Success",
+	}))
+}
+
+
 
 //Get authorized user info by jwt token
 func User(c *fiber.Ctx) error {
@@ -150,23 +171,6 @@ func User(c *fiber.Ctx) error {
 	database.DB.Where("id = ?", claims.Issuer).First(&user)
 
 	return c.JSON(user)
-}
-
-//Logout
-func Logout(c *fiber.Ctx) error {
-	//Destruct cookie
-	cookie := fiber.Cookie{
-		Name: "jwt",
-		Value: "",
-		Expires: time.Now().Add(-time.Hour),
-		SameSite: "strict",
-	}
-
-	c.Cookie(&cookie)
-
-	return (c.JSON(fiber.Map{
-		"message": "Success",
-	}))
 }
 
 //Check if user is admin
