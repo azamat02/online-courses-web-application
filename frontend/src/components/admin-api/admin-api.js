@@ -3,7 +3,7 @@ import axios from "axios";
 
 export default class AdminApi {
     constructor() {
-        this._apiBase = 'http://localhost:8000/api/admin'
+        this._apiBase = 'http://89.223.24.146:8000/api/admin'
     }
 
     // Users
